@@ -5,7 +5,6 @@ import { useRouter } from "next/navigation";
 import AppraisalLayout from "@/components/AppraisalLayout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import {
 	Card,
@@ -14,13 +13,7 @@ import {
 	CardHeader,
 	CardTitle,
 } from "@/components/ui/card";
-import {
-	Select,
-	SelectContent,
-	SelectItem,
-	SelectTrigger,
-	SelectValue,
-} from "@/components/ui/select";
+
 import { APPRAISAL_SECTIONS } from "@/lib/constants";
 import { ReadingMaterialEntry, ReadingMaterialSection } from "@/lib/types";
 import { getSectionData, updateSectionData } from "@/lib/localStorage";
@@ -108,7 +101,7 @@ export default function ReadingMaterialPage() {
 			updateSectionData("readingMaterial", payload, result.score);
 			setApiScore(result.score);
 			toast.success(result.message);
-		} catch (_e) {
+		} catch {
 			toast.error("Failed to submit section");
 		} finally {
 			setIsSubmitting(false);

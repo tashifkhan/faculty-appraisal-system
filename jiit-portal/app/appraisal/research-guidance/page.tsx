@@ -112,7 +112,7 @@ export default function ResearchGuidancePage() {
 			updateSectionData("researchGuidance", payload, result.score);
 			setApiScore(result.score);
 			toast.success(result.message);
-		} catch (_e) {
+		} catch {
 			toast.error("Failed to submit section");
 		} finally {
 			setIsSubmitting(false);
@@ -120,7 +120,7 @@ export default function ResearchGuidancePage() {
 	};
 
 	const levelOptions: ResearchGuidanceLevel[] = ["PhD", "MTech", "BTech"];
-	const statusOptions: ResearchGuidanceStatus[] = ["Completed", "Ongoing"];
+	// Status options are implied by type and rendered directly in rows
 
 	return (
 		<AppraisalLayout>

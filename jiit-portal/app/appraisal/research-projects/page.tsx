@@ -21,7 +21,12 @@ import {
 	SelectValue,
 } from "@/components/ui/select";
 import { APPRAISAL_SECTIONS } from "@/lib/constants";
-import { ResearchProjectEntry, ResearchProjectsSection } from "@/lib/types";
+import {
+	ResearchProjectEntry,
+	ResearchProjectsSection,
+	ResearchProjectRole,
+	ResearchProjectStatus,
+} from "@/lib/types";
 import { getSectionData, updateSectionData } from "@/lib/localStorage";
 import { simulateApiCall } from "@/lib/mockApi";
 import { ArrowLeft, ArrowRight, Plus, Save, Trash2 } from "lucide-react";
@@ -110,7 +115,7 @@ export default function ResearchProjectsPage() {
 			updateSectionData("researchProjects", payload, result.score);
 			setApiScore(result.score);
 			toast.success(result.message);
-		} catch (err) {
+		} catch {
 			toast.error("Failed to submit section");
 		} finally {
 			setIsSubmitting(false);
@@ -207,7 +212,7 @@ export default function ResearchProjectsPage() {
 										<Label>Status</Label>
 										<Select
 											value={entry.status}
-											onValueChange={(v: any) =>
+											onValueChange={(v: ResearchProjectStatus) =>
 												updateEntry(entry.id, "status", v)
 											}
 										>
@@ -240,7 +245,7 @@ export default function ResearchProjectsPage() {
 										<Label>Role</Label>
 										<Select
 											value={entry.role}
-											onValueChange={(v: any) =>
+											onValueChange={(v: ResearchProjectRole) =>
 												updateEntry(entry.id, "role", v)
 											}
 										>

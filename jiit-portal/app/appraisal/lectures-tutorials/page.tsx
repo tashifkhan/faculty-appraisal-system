@@ -19,13 +19,9 @@ import { simulateApiCall } from "@/lib/mockApi";
 import { toast } from "sonner";
 import { ArrowLeft, ArrowRight, Plus, Save, Trash2 } from "lucide-react";
 import AppraisalLayout from "@/components/AppraisalLayout";
-import {
-	Select,
-	SelectContent,
-	SelectItem,
-	SelectTrigger,
-	SelectValue,
-} from "@/components/ui/select";
+
+// Local row type including extra fields maintained in this page
+type Row = CourseEntry & { apiScore: number | null; hodRemarks?: string };
 
 export default function LecturesTutorialsPage() {
 	const router = useRouter();
@@ -33,9 +29,7 @@ export default function LecturesTutorialsPage() {
 	const [activeTab, setActiveTab] = useState<"odd" | "even">("odd");
 	const [apiScore, setApiScore] = useState<number | null>(null);
 
-	const [oddSemester, setOddSemester] = useState<
-		(CourseEntry & { apiScore: number | null; hodRemarks?: string })[]
-	>([
+	const [oddSemester, setOddSemester] = useState<Row[]>([
 		{
 			id: crypto.randomUUID(),
 			courseCode: "",
@@ -48,9 +42,7 @@ export default function LecturesTutorialsPage() {
 		},
 	]);
 
-	const [evenSemester, setEvenSemester] = useState<
-		(CourseEntry & { apiScore: number | null; hodRemarks?: string })[]
-	>([
+	const [evenSemester, setEvenSemester] = useState<Row[]>([
 		{
 			id: crypto.randomUUID(),
 			courseCode: "",
@@ -81,7 +73,7 @@ export default function LecturesTutorialsPage() {
 					id: c.id || crypto.randomUUID(),
 					apiScore: c.apiScore ?? null,
 					hodRemarks: c.hodRemarks ?? "Pending",
-				})) as any
+				}))
 			);
 			setEvenSemester(
 				(existing.evenSemester || []).map((c) => ({
@@ -89,23 +81,22 @@ export default function LecturesTutorialsPage() {
 					id: c.id || crypto.randomUUID(),
 					apiScore: c.apiScore ?? null,
 					hodRemarks: c.hodRemarks ?? "Pending",
-				})) as any
+				}))
 			);
 		}
 	}, []);
 
 	const addRow = (semester: "odd" | "even") => {
-		const row: CourseEntry & { apiScore: number | null; hodRemarks?: string } =
-			{
-				id: crypto.randomUUID(),
-				courseCode: "",
-				courseTitle: "",
-				contactHoursPerWeek: "",
-				scheduledHours: 0,
-				engagedHours: 0,
-				apiScore: null,
-				hodRemarks: "Pending",
-			};
+		const row: Row = {
+			id: crypto.randomUUID(),
+			courseCode: "",
+			courseTitle: "",
+			contactHoursPerWeek: "",
+			scheduledHours: 0,
+			engagedHours: 0,
+			apiScore: null,
+			hodRemarks: "Pending",
+		};
 		if (semester === "odd") setOddSemester((s) => [...s, row]);
 		else setEvenSemester((s) => [...s, row]);
 	};
@@ -122,15 +113,14 @@ export default function LecturesTutorialsPage() {
 		}
 	};
 
-	const updateRow = <K extends keyof CourseEntry | "apiScore" | "hodRemarks">(
+	const updateRow = <K extends keyof Row>(
 		semester: "odd" | "even",
 		id: string,
 		field: K,
-		value: any
+		value: Row[K]
 	) => {
-		const updater = (
-			rows: (CourseEntry & { apiScore: number | null; hodRemarks?: string })[]
-		) => rows.map((r) => (r.id === id ? { ...r, [field]: value } : r));
+		const updater = (rows: Row[]) =>
+			rows.map((r) => (r.id === id ? { ...r, [field]: value } : r));
 		if (semester === "odd") setOddSemester(updater);
 		else setEvenSemester(updater);
 	};
@@ -148,7 +138,7 @@ export default function LecturesTutorialsPage() {
 			updateSectionData("lecturesTutorials", formData, result.score);
 			setApiScore(result.score);
 			toast.success(result.message);
-		} catch (_err) {
+		} catch {
 			toast.error("Failed to submit section");
 		} finally {
 			setIsSubmitting(false);

@@ -50,11 +50,8 @@ export default function GeneralDetails() {
 	useEffect(() => {
 		const existingData = getSectionData("generalDetails");
 		if (existingData) {
-			const {
-				apiScore: _apiScore,
-				hodRemarks: _hodRemarks,
-				...formData
-			} = existingData as GeneralDetailsSection;
+			const { apiScore, hodRemarks, ...formData } =
+				existingData as GeneralDetailsSection;
 			reset(formData);
 			setApiScore(existingData.apiScore ?? null);
 		}
@@ -68,7 +65,7 @@ export default function GeneralDetails() {
 			updateSectionData("generalDetails", section, result.score);
 			setApiScore(result.score);
 			toast.success(result.message);
-		} catch (_error) {
+		} catch {
 			toast.error("Failed to submit section");
 		} finally {
 			setIsSubmitting(false);

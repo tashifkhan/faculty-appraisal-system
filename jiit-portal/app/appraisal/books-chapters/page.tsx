@@ -104,7 +104,7 @@ export default function BooksChaptersPage() {
 			updateSectionData("booksChapters", payload, result.score);
 			setApiScore(result.score);
 			toast.success(result.message);
-		} catch (_e) {
+		} catch {
 			toast.error("Failed to submit section");
 		} finally {
 			setIsSubmitting(false);
@@ -151,7 +151,6 @@ export default function BooksChaptersPage() {
 								</thead>
 								<tbody>
 									{entries.map((e) => {
-										const rowScore = e.publicationType === "B" ? 20 : 10; // matches mock scoring
 										return (
 											<tr key={e.id} className="border-t align-top">
 												<td className="p-3">

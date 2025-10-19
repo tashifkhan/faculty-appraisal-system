@@ -99,7 +99,7 @@ export default function ResearchPapers() {
 			updateSectionData("researchPapers", data, result.score);
 			setApiScore(result.score);
 			toast.success(result.message);
-		} catch (_error) {
+		} catch {
 			toast.error("Failed to submit section");
 		} finally {
 			setIsSubmitting(false);

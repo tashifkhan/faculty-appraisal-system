@@ -74,7 +74,7 @@ export default function MembershipsPage() {
 			updateSectionData("memberships", payload, result.score);
 			setApiScore(result.score);
 			toast.success(result.message);
-		} catch (err) {
+		} catch {
 			toast.error("Failed to submit section");
 		} finally {
 			setIsSubmitting(false);

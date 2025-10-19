@@ -108,7 +108,7 @@ export default function ExamDutiesPage() {
 			updateSectionData("examDuties", sectionPayload, result.score);
 			setApiScore(result.score);
 			toast.success(result.message);
-		} catch (_e) {
+		} catch {
 			toast.error("Failed to submit section");
 		} finally {
 			setIsSubmitting(false);
@@ -157,7 +157,7 @@ export default function ExamDutiesPage() {
 												: e.activity === "ab_evaluated"
 												? 0.02
 												: 0.5;
-										const rowScore = Math.round(tsum * weight);
+										// rowScore would be computed by backend scoring; omit local unused var
 										return (
 											<tr key={e.id} className="border-t align-top">
 												<td className="px-4 py-3 w-[240px]">
