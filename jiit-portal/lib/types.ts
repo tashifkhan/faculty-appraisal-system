@@ -130,7 +130,7 @@ export interface AppraisalData {
   readingMaterial?: ReadingMaterialSection;
   projectGuidance?: ProjectGuidanceSection;
   examDuties?: ExamDutiesSection;
-  studentActivities?: ScoredItem & Record<string, unknown>;
+  studentActivities?: StudentActivitiesSection;
   researchPapers?: ResearchPapersSection;
   booksChapters?: BooksChaptersSection;
   researchProjects?: ResearchProjectsSection;
@@ -190,3 +190,60 @@ export interface MembershipEntry {
 export interface MembershipsSection extends ScoredItem {
   entries: MembershipEntry[];
 }
+
+// 7. Student Activities (Contribution/Participation in Students Extra & Co‑Curricular activities)
+export interface IndustryExpert {
+  id: string;
+  name: string;
+  profile: string;
+  company: string;
+  emailId: string;
+  cellNumber: string;
+  startDate: string; // ISO date
+  endDate: string; // ISO date
+  durationHours: number;
+}
+
+// SECTION 13A — Student Technical Communities / Clubs
+export interface TechCommunityActivity {
+  id: string;
+  communityName: string; // e.g., "Google Developer Group (GDG) Hub"
+  role: string; // e.g., "Faculty Coordinator"
+  contributionDetails: string; // Description of responsibilities
+}
+
+// SECTION 13B — Organized Competitions / Hackathons
+export interface StudentEvent {
+  id: string;
+  eventName: string; // e.g., "Bit‑Box 2.0"
+  eventType: string; // e.g., "Hackathon" | "Competition"
+  eventDates: string; // e.g., "4–6 March 2022"
+  theme: string; // e.g., "Google Solution Challenge"
+  facultyRole: string; // e.g., "Event Chair", "Organizer"
+  description: string;
+  expertsInvited: IndustryExpert[]; // nested table
+}
+
+// SECTION 13C — Mentorship and Internal Competitions
+export interface MentorshipActivity {
+  id: string;
+  programName: string; // e.g., "Smart India Hackathon"
+  involvementType: string; // e.g., "Mentor" | "Coordinator"
+  details: string; // description
+}
+
+// SECTION 13D — Other Co‑Curricular Contributions
+export interface OtherContribution {
+  id: string;
+  title: string;
+  details: string;
+}
+
+export interface StudentActivitiesForm {
+  techCommunities: (TechCommunityActivity & ScoredItem)[];
+  studentEvents: (StudentEvent & ScoredItem)[];
+  mentorships: (MentorshipActivity & ScoredItem)[];
+  otherContributions: (OtherContribution & ScoredItem)[];
+}
+
+export interface StudentActivitiesSection extends StudentActivitiesForm, ScoredItem {}
