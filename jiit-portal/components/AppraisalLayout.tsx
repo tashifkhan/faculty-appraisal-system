@@ -13,6 +13,7 @@ import {
 } from "@/lib/localStorage";
 import { SectionStatus, ScoredItem } from "@/lib/types";
 import { Button } from "@/components/ui/button";
+import Image from "next/image";
 
 interface AppraisalLayoutProps {
 	children: ReactNode;
@@ -82,8 +83,8 @@ export default function AppraisalLayout({ children }: AppraisalLayoutProps) {
 					</Button>
 
 					<div className="flex items-center gap-3">
-						<div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary text-primary-foreground font-bold text-lg">
-							JI
+						<div className="flex h-10 w-10 items-center justify-center rounded-lg font-bold text-lg">
+							<Image src="/logo.png" alt="JIIT Logo" width={32} height={32} />
 						</div>
 						<div>
 							<h1 className="text-lg font-bold text-foreground">
