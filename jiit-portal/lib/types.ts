@@ -31,7 +31,9 @@ export interface ConferenceEntry {
 }
 
 export interface ConferenceSection {
-  entries: (ConferenceEntry & ScoredItem)[];
+  entries: ConferenceEntry[];
+  apiScore: number | null;
+  hodRemarks?: string;
 }
 
 // 3. Lectures/Tutorials
@@ -58,7 +60,9 @@ export interface ResearchPaperEntry {
 }
 
 export interface ResearchPapersSection {
-  entries: (ResearchPaperEntry & ScoredItem)[];
+  entries: ResearchPaperEntry[];
+  apiScore: number | null;
+  hodRemarks?: string;
 }
 
 // Section Status
@@ -69,15 +73,16 @@ export interface AppraisalData {
   generalDetails?: GeneralDetailsSection;
   conferenceEvents?: ConferenceSection;
   lecturesTutorials?: LecturesTutorialsSection;
-  readingMaterial?: any;
-  projectGuidance?: any;
-  examDuties?: any;
-  studentActivities?: any;
+  // For not-yet-modeled sections, use a generic, typed placeholder
+  readingMaterial?: ScoredItem & Record<string, unknown>;
+  projectGuidance?: ScoredItem & Record<string, unknown>;
+  examDuties?: ScoredItem & Record<string, unknown>;
+  studentActivities?: ScoredItem & Record<string, unknown>;
   researchPapers?: ResearchPapersSection;
-  booksChapters?: any;
-  researchProjects?: any;
-  researchGuidance?: any;
-  memberships?: any;
+  booksChapters?: ScoredItem & Record<string, unknown>;
+  researchProjects?: ScoredItem & Record<string, unknown>;
+  researchGuidance?: ScoredItem & Record<string, unknown>;
+  memberships?: ScoredItem & Record<string, unknown>;
   sectionStatus: { [key: string]: SectionStatus };
 }
 

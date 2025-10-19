@@ -20,7 +20,7 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from "@/components/ui/select";
-import { ResearchPaperEntry } from "@/lib/types";
+import { ResearchPaperEntry, ResearchPapersSection } from "@/lib/types";
 import { getSectionData, updateSectionData } from "@/lib/localStorage";
 import { simulateApiCall } from "@/lib/mockApi";
 import { APPRAISAL_SECTIONS, PUBLICATION_TYPES } from "@/lib/constants";
@@ -48,18 +48,17 @@ export default function ResearchPapers() {
 	const nextSection = APPRAISAL_SECTIONS[currentIndex + 1];
 
 	useEffect(() => {
-		const existingData = getSectionData("researchPapers") as any;
+		const existingData = getSectionData("researchPapers");
 		if (existingData && existingData.entries?.length > 0) {
 			setEntries(
-				existingData.entries.map((e: any) => {
-					const { apiScore, hodRemarks, ...entryData } = e;
-					return {
-						...entryData,
-						id: entryData.id || crypto.randomUUID(),
-					} as ResearchPaperEntry;
-				})
+				existingData.entries.map((e) => ({
+					id: e.id || crypto.randomUUID(),
+					authors: e.authors,
+					titleAndReference: e.titleAndReference,
+					publicationType: e.publicationType,
+				}))
 			);
-			setApiScore(existingData.entries[0]?.apiScore || null);
+			setApiScore(existingData.apiScore ?? null);
 		}
 	}, []);
 
@@ -95,12 +94,12 @@ export default function ResearchPapers() {
 		e.preventDefault();
 		setIsSubmitting(true);
 		try {
-			const data = { entries };
+			const data: ResearchPapersSection = { entries, apiScore: null };
 			const result = await simulateApiCall("research-papers", data);
-			updateSectionData("researchPapers", data as any, result.score);
+			updateSectionData("researchPapers", data, result.score);
 			setApiScore(result.score);
 			toast.success(result.message);
-		} catch (error) {
+		} catch (_error) {
 			toast.error("Failed to submit section");
 		} finally {
 			setIsSubmitting(false);
