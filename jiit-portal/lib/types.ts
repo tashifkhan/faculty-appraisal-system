@@ -46,9 +46,63 @@ export interface CourseEntry {
   engagedHours: number;
 }
 
-export interface LecturesTutorialsSection {
+export interface LecturesTutorialsSection extends ScoredItem {
   oddSemester: (CourseEntry & ScoredItem)[];
   evenSemester: (CourseEntry & ScoredItem)[];
+}
+
+// 4. Reading / Instructional Material
+export interface ReadingMaterialEntry {
+  id: string;
+  courseCode: string;
+  consulted: string; // Knowledge Resources Consulted
+  prescribed: string; // Knowledge Resources Prescribed
+  additional: string; // Additional Resources Provided
+  selfAssessedApi: number; // Self assessed API score per course
+  hodRemarks?: string; // Approved/Pending/Rejected
+}
+
+export interface ReadingMaterialSection extends ScoredItem {
+  entries: ReadingMaterialEntry[];
+}
+
+// 5. Project Guidance (UG level)
+export interface ProjectGuidanceSection extends ScoredItem {
+  projectsGuided: number;
+  studentsGuided: number;
+}
+
+// 6. Examination Duties
+export type ExamDutyActivity =
+  | 'qp_set' // No. of Q. Papers Set
+  | 'ab_evaluated' // No. of A/B Evaluated
+  | 'practical_conducted'; // No. of Practical Exams Conducted
+
+export interface ExamDutyEntry {
+  id: string;
+  activity: ExamDutyActivity;
+  classLevel: 'UG' | 'PG';
+  t1: number;
+  t2: number;
+  t3: number;
+}
+
+export interface ExamDutiesSection extends ScoredItem {
+  entries: ExamDutyEntry[];
+}
+
+// 9. Books & Chapters in Books Written
+export type BookChapterType = 'B' | 'C'; // B-Book, C-Chapter
+
+export interface BookChapterEntry {
+  id: string;
+  authors: string;
+  titleAndReference: string;
+  publicationType: BookChapterType; // 'B' for Book, 'C' for Chapter
+}
+
+export interface BooksChaptersSection extends ScoredItem {
+  entries: BookChapterEntry[];
 }
 
 // 8. Research Papers
@@ -73,16 +127,15 @@ export interface AppraisalData {
   generalDetails?: GeneralDetailsSection;
   conferenceEvents?: ConferenceSection;
   lecturesTutorials?: LecturesTutorialsSection;
-  // For not-yet-modeled sections, use a generic, typed placeholder
-  readingMaterial?: ScoredItem & Record<string, unknown>;
-  projectGuidance?: ScoredItem & Record<string, unknown>;
-  examDuties?: ScoredItem & Record<string, unknown>;
+  readingMaterial?: ReadingMaterialSection;
+  projectGuidance?: ProjectGuidanceSection;
+  examDuties?: ExamDutiesSection;
   studentActivities?: ScoredItem & Record<string, unknown>;
   researchPapers?: ResearchPapersSection;
-  booksChapters?: ScoredItem & Record<string, unknown>;
-  researchProjects?: ScoredItem & Record<string, unknown>;
-  researchGuidance?: ScoredItem & Record<string, unknown>;
-  memberships?: ScoredItem & Record<string, unknown>;
+  booksChapters?: BooksChaptersSection;
+  researchProjects?: ResearchProjectsSection;
+  researchGuidance?: ResearchGuidanceSection;
+  memberships?: MembershipsSection;
   sectionStatus: { [key: string]: SectionStatus };
 }
 
@@ -90,4 +143,50 @@ export interface UserProfile {
   name: string;
   email: string;
   department: string;
+}
+
+// 10. Research Projects & Consultancy Works
+export type ResearchProjectStatus = 'Completed' | 'Ongoing';
+export type ResearchProjectRole = 'Chief Investigator' | 'Co-Investigator';
+
+export interface ResearchProjectEntry {
+  id: string;
+  title: string; // Title of Project / Consultancy
+  sponsoringAgency: string;
+  duration: string; // e.g., '2 years', '6 months'
+  sanctionDate: string; // e.g., '2023-03-20' (ISO) or display string
+  status: ResearchProjectStatus;
+  amountSanctioned: number; // amount in currency units
+  role: ResearchProjectRole;
+}
+
+export interface ResearchProjectsSection extends ScoredItem {
+  entries: ResearchProjectEntry[];
+}
+
+// 11. Research Guidance
+export type ResearchGuidanceLevel = 'PhD' | 'MTech' | 'BTech';
+export type ResearchGuidanceStatus = 'Completed' | 'Ongoing';
+
+export interface ResearchGuidanceEntry {
+  id: string;
+  enrolmentAndName: string; // Enrol. No. & Name
+  title: string; // Title of Thesis/Dissertation/Project
+  jointSupervisors: string;
+  level: ResearchGuidanceLevel;
+  status: ResearchGuidanceStatus;
+}
+
+export interface ResearchGuidanceSection extends ScoredItem {
+  entries: ResearchGuidanceEntry[];
+}
+
+// 12. Memberships of Professional Bodies
+export interface MembershipEntry {
+  id: string;
+  detail: string; // e.g., IEEE (Sr. Member), MIR Labs
+}
+
+export interface MembershipsSection extends ScoredItem {
+  entries: MembershipEntry[];
 }
