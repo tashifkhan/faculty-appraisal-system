@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/card";
 import { setAuth, setUser } from "@/lib/localStorage";
 import { toast } from "sonner";
+import Image from "next/image";
 
 export default function Login() {
 	const router = useRouter();
@@ -47,10 +48,12 @@ export default function Login() {
 		<div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary/5 via-background to-accent/5 p-4">
 			<Card className="w-full max-w-md shadow-xl">
 				<CardHeader className="space-y-3 text-center">
-					<div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-primary text-primary-foreground">
-						<span className="text-2xl font-bold">JI</span>
+					<div className="mx-auto flex h-32 w-32 items-center justify-center rounded-2xl">
+						<Image src="/logo.png" alt="JIIT Logo" width={128} height={128} />
 					</div>
-					<CardTitle className="text-2xl">Faculty Appraisal Portal</CardTitle>
+					<CardTitle className="text-2xl pt-5">
+						Faculty Appraisal Portal
+					</CardTitle>
 					<CardDescription>
 						Sign in to submit your annual performance appraisal
 					</CardDescription>
