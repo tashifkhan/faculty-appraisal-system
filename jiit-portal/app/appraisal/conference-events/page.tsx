@@ -19,7 +19,7 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from "@/components/ui/select";
-import { ConferenceEntry } from "@/lib/types";
+import { ConferenceEntry, ConferenceSection } from "@/lib/types";
 import { getSectionData, updateSectionData } from "@/lib/localStorage";
 import { simulateApiCall } from "@/lib/mockApi";
 import { APPRAISAL_SECTIONS } from "@/lib/constants";
@@ -49,18 +49,19 @@ export default function ConferenceEvents() {
 	const nextSection = APPRAISAL_SECTIONS[currentIndex + 1];
 
 	useEffect(() => {
-		const existingData = getSectionData("conferenceEvents") as any;
+		const existingData = getSectionData("conferenceEvents");
 		if (existingData && existingData.entries?.length > 0) {
 			setEntries(
-				existingData.entries.map((e: any) => {
-					const { apiScore, hodRemarks, ...entryData } = e;
-					return {
-						...entryData,
-						id: entryData.id || crypto.randomUUID(),
-					} as ConferenceEntry;
-				})
+				existingData.entries.map((e) => ({
+					id: e.id || crypto.randomUUID(),
+					title: e.title,
+					datesDuration: e.datesDuration,
+					sponsoringAgency: e.sponsoringAgency,
+					organisationPlace: e.organisationPlace,
+					attendedOrganized: e.attendedOrganized,
+				}))
 			);
-			setApiScore(existingData.entries[0]?.apiScore || null);
+			setApiScore(existingData.apiScore ?? null);
 		}
 	}, []);
 
@@ -98,12 +99,12 @@ export default function ConferenceEvents() {
 		e.preventDefault();
 		setIsSubmitting(true);
 		try {
-			const data = { entries };
+			const data: ConferenceSection = { entries, apiScore: null };
 			const result = await simulateApiCall("conference-events", data);
-			updateSectionData("conferenceEvents", data as any, result.score);
+			updateSectionData("conferenceEvents", data, result.score);
 			setApiScore(result.score);
 			toast.success(result.message);
-		} catch (error) {
+		} catch (_error) {
 			toast.error("Failed to submit section");
 		} finally {
 			setIsSubmitting(false);

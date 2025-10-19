@@ -14,7 +14,7 @@ import {
 	CardHeader,
 	CardTitle,
 } from "@/components/ui/card";
-import { GeneralDetailsForm } from "@/lib/types";
+import { GeneralDetailsForm, GeneralDetailsSection } from "@/lib/types";
 import { getSectionData, updateSectionData } from "@/lib/localStorage";
 import { simulateApiCall } from "@/lib/mockApi";
 import { APPRAISAL_SECTIONS } from "@/lib/constants";
@@ -50,9 +50,13 @@ export default function GeneralDetails() {
 	useEffect(() => {
 		const existingData = getSectionData("generalDetails");
 		if (existingData) {
-			const { apiScore, hodRemarks, ...formData } = existingData as any;
+			const {
+				apiScore: _apiScore,
+				hodRemarks: _hodRemarks,
+				...formData
+			} = existingData as GeneralDetailsSection;
 			reset(formData);
-			setApiScore((existingData as any).apiScore || null);
+			setApiScore(existingData.apiScore ?? null);
 		}
 	}, [reset]);
 
@@ -60,10 +64,11 @@ export default function GeneralDetails() {
 		setIsSubmitting(true);
 		try {
 			const result = await simulateApiCall("general-details", data);
-			updateSectionData("generalDetails", data as any, result.score);
+			const section: GeneralDetailsSection = { ...data, apiScore: null };
+			updateSectionData("generalDetails", section, result.score);
 			setApiScore(result.score);
 			toast.success(result.message);
-		} catch (error) {
+		} catch (_error) {
 			toast.error("Failed to submit section");
 		} finally {
 			setIsSubmitting(false);

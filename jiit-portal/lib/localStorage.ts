@@ -1,4 +1,4 @@
-import { AppraisalData, UserProfile } from './types';
+import { AppraisalData, ScoredItem, UserProfile } from './types';
 
 const APPRAISAL_KEY = 'jiit_faculty_appraisal_data';
 const USER_KEY = 'jiit_faculty_user';
@@ -7,7 +7,7 @@ const AUTH_KEY = 'jiit_faculty_auth';
 export const getAppraisalData = (): AppraisalData => {
   if (typeof window === 'undefined') return { sectionStatus: {} };
   const data = localStorage.getItem(APPRAISAL_KEY);
-  return data ? JSON.parse(data) : { sectionStatus: {} };
+  return data ? (JSON.parse(data) as AppraisalData) : { sectionStatus: {} };
 };
 
 export const setAppraisalData = (data: AppraisalData) => {
@@ -23,7 +23,11 @@ export const updateSectionData = <T extends keyof AppraisalData>(
   status: 'completed' | 'in_progress' = 'completed'
 ) => {
   const currentData = getAppraisalData();
-  const updatedSection = { ...data, apiScore: score } as any;
+  // If the section supports apiScore, attach it; otherwise just persist data as-is
+  const updatedSection =
+    data && typeof data === 'object' && data !== null && 'apiScore' in (data as Record<string, unknown>)
+      ? ({ ...(data as Record<string, unknown>), apiScore: score } as AppraisalData[T])
+      : data;
   const newStatus = { ...currentData.sectionStatus, [sectionId]: status };
   const updatedData = {
     ...currentData,
@@ -45,11 +49,12 @@ export const getTotalScore = (): number => {
   const data = getAppraisalData();
   let total = 0;
   
-  Object.keys(data).forEach(key => {
+  (Object.keys(data) as Array<keyof AppraisalData | 'sectionStatus'>).forEach((key) => {
     if (key !== 'sectionStatus') {
       const section = data[key as keyof AppraisalData];
-      if (section && typeof section === 'object' && 'apiScore' in section && section.apiScore) {
-        total += section.apiScore;
+      if (section && typeof section === 'object' && 'apiScore' in (section as ScoredItem)) {
+        const s = (section as ScoredItem).apiScore;
+        if (typeof s === 'number') total += s;
       }
     }
   });

@@ -11,7 +11,7 @@ import {
 	logout,
 	isAuthenticated,
 } from "@/lib/localStorage";
-import { SectionStatus, ScoredItem } from "@/lib/types";
+import { AppraisalData, SectionStatus, ScoredItem } from "@/lib/types";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
 
@@ -145,13 +145,20 @@ export default function AppraisalLayout({ children }: AppraisalLayoutProps) {
 									memberships: "memberships",
 								};
 								const dataKey = (keyMap[section.id] ??
-									section.id) as keyof ReturnType<typeof getAppraisalData>;
-								const sectionData = (appraisalData as any)[dataKey];
+									section.id) as keyof AppraisalData;
+								const sectionData =
+									appraisalData[dataKey as keyof AppraisalData];
 								const statusKey =
 									section.id in keyMap ? section.id : (section.id as string);
 								const status =
 									appraisalData.sectionStatus[statusKey] || "not_started";
-								const apiScore = (sectionData as ScoredItem)?.apiScore ?? null;
+								const apiScore =
+									sectionData &&
+									typeof sectionData === "object" &&
+									sectionData !== null &&
+									"apiScore" in (sectionData as ScoredItem)
+										? (sectionData as ScoredItem).apiScore
+										: null;
 								const isActive = pathname === section.route;
 
 								return (

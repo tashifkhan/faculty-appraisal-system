@@ -1,23 +1,35 @@
 // Mock API functions to simulate backend scoring
+import {
+  ConferenceEntry,
+  ConferenceSection,
+  GeneralDetailsForm,
+  GeneralDetailsSection,
+  LecturesTutorialsSection,
+  ResearchPaperEntry,
+  ResearchPapersSection,
+} from './types';
 
-export const calculateGeneralDetailsScore = (data: any): number => {
+export const calculateGeneralDetailsScore = (data: GeneralDetailsForm | GeneralDetailsSection): number => {
   // Simple mock: 10 points for completing general details
   return 10;
 };
 
-export const calculateConferenceScore = (entries: any[]): number => {
+export const calculateConferenceScore = (entries: ConferenceEntry[]): number => {
   // Mock: 5 points per conference attended, 10 per organized
   return entries.reduce((total, entry) => {
     return total + (entry.attendedOrganized === 'organized' ? 10 : 5);
   }, 0);
 };
 
-export const calculateLecturesScore = (oddSemester: any[], evenSemester: any[]): number => {
+export const calculateLecturesScore = (
+  oddSemester: LecturesTutorialsSection['oddSemester'],
+  evenSemester: LecturesTutorialsSection['evenSemester']
+): number => {
   // Mock: 10 points per course
   return (oddSemester.length + evenSemester.length) * 10;
 };
 
-export const calculateResearchPapersScore = (entries: any[]): number => {
+export const calculateResearchPapersScore = (entries: ResearchPaperEntry[]): number => {
   // Mock: Different scores based on publication type
   const scores: { [key: string]: number } = {
     IJ: 20, // International Journal
@@ -32,23 +44,43 @@ export const calculateResearchPapersScore = (entries: any[]): number => {
   }, 0);
 };
 
-export const simulateApiCall = (sectionId: string, data: any): Promise<{ score: number; message: string }> => {
+type SectionId =
+  | 'general-details'
+  | 'conference-events'
+  | 'lectures-tutorials'
+  | 'research-papers'
+  | (string & {});
+
+type SectionPayloadMap = {
+  'general-details': GeneralDetailsForm | GeneralDetailsSection;
+  'conference-events': ConferenceSection | { entries: ConferenceEntry[] };
+  'lectures-tutorials': LecturesTutorialsSection;
+  'research-papers': ResearchPapersSection | { entries: ResearchPaperEntry[] };
+};
+
+export const simulateApiCall = <T extends SectionId>(
+  sectionId: T,
+  data: T extends keyof SectionPayloadMap ? SectionPayloadMap[T] : unknown
+): Promise<{ score: number; message: string }> => {
   return new Promise((resolve) => {
     setTimeout(() => {
       let score = 0;
       
       switch (sectionId) {
         case 'general-details':
-          score = calculateGeneralDetailsScore(data);
+          score = calculateGeneralDetailsScore(data as SectionPayloadMap['general-details']);
           break;
         case 'conference-events':
-          score = calculateConferenceScore(data.entries || []);
+          score = calculateConferenceScore((data as ConferenceSection | { entries: ConferenceEntry[] }).entries || []);
           break;
         case 'lectures-tutorials':
-          score = calculateLecturesScore(data.oddSemester || [], data.evenSemester || []);
+          {
+            const d = data as LecturesTutorialsSection;
+            score = calculateLecturesScore(d.oddSemester || [], d.evenSemester || []);
+          }
           break;
         case 'research-papers':
-          score = calculateResearchPapersScore(data.entries || []);
+          score = calculateResearchPapersScore((data as ResearchPapersSection | { entries: ResearchPaperEntry[] }).entries || []);
           break;
         default:
           score = 5; // Default score for other sections
