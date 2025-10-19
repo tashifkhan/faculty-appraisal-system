@@ -43,9 +43,7 @@ type RowWithMeta<T> = T & {
 
 export default function StudentActivitiesPage() {
 	const router = useRouter();
-	const [activeTab, setActiveTab] = useState<"13A" | "13B" | "13C" | "13D">(
-		"13A"
-	);
+	const [activeTab, setActiveTab] = useState<"A" | "B" | "C" | "D">("A");
 	const [isSubmitting, setIsSubmitting] = useState(false);
 	const [apiScore, setApiScore] = useState<number | null>(null);
 
@@ -570,10 +568,10 @@ export default function StudentActivitiesPage() {
 						<div className="flex gap-6">
 							{(
 								[
-									["13A", "13A. Tech Communities / Clubs"],
-									["13B", "13B. Organized Events / Hackathons"],
-									["13C", "13C. Mentorship & Internal Competitions"],
-									["13D", "13D. Other Contributions"],
+									["A", "Tech Communities / Hubs"],
+									["B", "Organized Events / Hackathons"],
+									["C", "Mentorship & Internal Competitions"],
+									["D", "Other Contributions"],
 								] as const
 							).map(([id, label]) => (
 								<button
@@ -594,7 +592,7 @@ export default function StudentActivitiesPage() {
 
 					<form onSubmit={onSubmit} className="space-y-6">
 						{/* 13A */}
-						{activeTab === "13A" && (
+						{activeTab === "A" && (
 							<div className="space-y-3">
 								{techCommunities.map((r) => (
 									<div key={r.id} className="rounded-lg border p-4">
@@ -679,7 +677,7 @@ export default function StudentActivitiesPage() {
 						)}
 
 						{/* 13B */}
-						{activeTab === "13B" && (
+						{activeTab === "B" && (
 							<div className="space-y-3">
 								{studentEvents.map((ev) => (
 									<EventCard key={ev.id} ev={ev} />
@@ -709,7 +707,7 @@ export default function StudentActivitiesPage() {
 						)}
 
 						{/* 13C */}
-						{activeTab === "13C" && (
+						{activeTab === "C" && (
 							<div className="space-y-3">
 								{mentorships.map((m) => (
 									<div key={m.id} className="rounded-lg border p-4">
@@ -792,7 +790,7 @@ export default function StudentActivitiesPage() {
 						)}
 
 						{/* 13D */}
-						{activeTab === "13D" && (
+						{activeTab === "D" && (
 							<div className="space-y-3">
 								{otherContributions.map((o) => (
 									<div key={o.id} className="rounded-lg border p-4">
