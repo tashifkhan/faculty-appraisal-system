@@ -120,7 +120,7 @@ export default function StudentActivitiesPage() {
 			setApiScore(existing.apiScore ?? null);
 			setTechCommunities(
 				(existing.techCommunities || []).map((e) => ({
-					id: (e as any).id || crypto.randomUUID(),
+					id: (e as { id?: string }).id ?? crypto.randomUUID(),
 					communityName: e.communityName,
 					role: e.role,
 					contributionDetails: e.contributionDetails,
@@ -131,7 +131,7 @@ export default function StudentActivitiesPage() {
 
 			setStudentEvents(
 				(existing.studentEvents || []).map((e) => ({
-					id: (e as any).id || crypto.randomUUID(),
+					id: (e as { id?: string }).id ?? crypto.randomUUID(),
 					eventName: e.eventName,
 					eventType: e.eventType,
 					eventDates: e.eventDates,
@@ -139,7 +139,7 @@ export default function StudentActivitiesPage() {
 					facultyRole: e.facultyRole,
 					description: e.description,
 					expertsInvited: (e.expertsInvited || []).map((x) => ({
-						id: (x as any).id || crypto.randomUUID(),
+						id: (x as { id?: string }).id ?? crypto.randomUUID(),
 						name: x.name,
 						profile: x.profile,
 						company: x.company,
@@ -156,7 +156,7 @@ export default function StudentActivitiesPage() {
 
 			setMentorships(
 				(existing.mentorships || []).map((e) => ({
-					id: (e as any).id || crypto.randomUUID(),
+					id: (e as { id?: string }).id ?? crypto.randomUUID(),
 					programName: e.programName,
 					involvementType: e.involvementType,
 					details: e.details,
@@ -167,7 +167,7 @@ export default function StudentActivitiesPage() {
 
 			setOtherContributions(
 				(existing.otherContributions || []).map((e) => ({
-					id: (e as any).id || crypto.randomUUID(),
+					id: (e as { id?: string }).id ?? crypto.randomUUID(),
 					title: e.title,
 					details: e.details,
 					apiScore: e.apiScore ?? null,
@@ -199,7 +199,7 @@ export default function StudentActivitiesPage() {
 			updateSectionData("studentActivities", sectionPayload, result.score);
 			setApiScore(result.score);
 			toast.success(result.message);
-		} catch (err) {
+		} catch {
 			toast.error("Failed to submit section");
 		} finally {
 			setIsSubmitting(false);
@@ -259,7 +259,7 @@ export default function StudentActivitiesPage() {
 					? {
 							...ev,
 							expertsInvited: ev.expertsInvited.filter(
-								(ex) => (ex as any).id !== expertId
+								(ex) => ex.id !== expertId
 							),
 					  }
 					: ev
@@ -278,9 +278,7 @@ export default function StudentActivitiesPage() {
 					? {
 							...ev,
 							expertsInvited: ev.expertsInvited.map((ex) =>
-								(ex as any).id === expertId
-									? { ...(ex as any), [field]: value }
-									: ex
+								ex.id === expertId ? { ...ex, [field]: value } : ex
 							),
 					  }
 					: ev
@@ -434,8 +432,8 @@ export default function StudentActivitiesPage() {
 								</tr>
 							</thead>
 							<tbody>
-								{ev.expertsInvited?.map((ex) => {
-									const id = (ex as any).id as string;
+								{ev.expertsInvited?.map((ex: IndustryExpert) => {
+									const id = ex.id;
 									return (
 										<tr key={id} className="border-t">
 											<td className="px-3 py-2">
