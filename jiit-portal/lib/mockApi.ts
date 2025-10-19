@@ -20,6 +20,7 @@ import {
   ResearchGuidanceEntry,
   MembershipsSection,
   MembershipEntry,
+  StudentActivitiesSection,
 } from './types';
 
 export const calculateGeneralDetailsScore = (data: GeneralDetailsForm | GeneralDetailsSection): number => {
@@ -125,6 +126,20 @@ export const calculateMembershipsScore = (entries: MembershipEntry[]): number =>
   return Math.min(25, (entries?.length || 0) * per);
 };
 
+export const calculateStudentActivitiesScore = (data: StudentActivitiesSection): number => {
+  // Mock scoring heuristic inspired by proposal:
+  // - Tech communities: 5 points per entry
+  // - Student events: 10 per event + 1 per expert (capped 5/event)
+  // - Mentorships: 5 per entry
+  // - Other contributions: 3 per entry
+  const tc = (data.techCommunities?.length || 0) * 5;
+  const events = (data.studentEvents || []).reduce((sum, ev) => sum + 10 + Math.min(5, ev.expertsInvited?.length || 0), 0);
+  const ms = (data.mentorships?.length || 0) * 5;
+  const oc = (data.otherContributions?.length || 0) * 3;
+  // Cap total to 20 to keep balance with other sections
+  return Math.min(20, tc + events + ms + oc);
+};
+
 type SectionId =
   | 'general-details'
   | 'conference-events'
@@ -137,6 +152,7 @@ type SectionId =
   | 'research-projects'
   | 'research-guidance'
   | 'memberships'
+  | 'student-activities'
   | (string & {});
 
 type SectionPayloadMap = {
@@ -151,6 +167,7 @@ type SectionPayloadMap = {
   'research-projects': ResearchProjectsSection | { entries: ResearchProjectEntry[] };
   'research-guidance': ResearchGuidanceSection | { entries: ResearchGuidanceEntry[] };
   'memberships': MembershipsSection | { entries: MembershipEntry[] };
+  'student-activities': StudentActivitiesSection;
 };
 
 export const simulateApiCall = <T extends SectionId>(
@@ -197,6 +214,9 @@ export const simulateApiCall = <T extends SectionId>(
           break;
         case 'memberships':
           score = calculateMembershipsScore((data as MembershipsSection | { entries: MembershipEntry[] }).entries || []);
+          break;
+        case 'student-activities':
+          score = calculateStudentActivitiesScore(data as StudentActivitiesSection);
           break;
         default:
           score = 5; // Default score for other sections
