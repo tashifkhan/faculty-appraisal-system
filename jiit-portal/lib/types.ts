@@ -46,9 +46,30 @@ export interface CourseEntry {
   engagedHours: number;
 }
 
-export interface LecturesTutorialsSection {
+export interface LecturesTutorialsSection extends ScoredItem {
   oddSemester: (CourseEntry & ScoredItem)[];
   evenSemester: (CourseEntry & ScoredItem)[];
+}
+
+// 4. Reading / Instructional Material
+export interface ReadingMaterialEntry {
+  id: string;
+  courseCode: string;
+  consulted: string; // Knowledge Resources Consulted
+  prescribed: string; // Knowledge Resources Prescribed
+  additional: string; // Additional Resources Provided
+  selfAssessedApi: number; // Self assessed API score per course
+  hodRemarks?: string; // Approved/Pending/Rejected
+}
+
+export interface ReadingMaterialSection extends ScoredItem {
+  entries: ReadingMaterialEntry[];
+}
+
+// 5. Project Guidance (UG level)
+export interface ProjectGuidanceSection extends ScoredItem {
+  projectsGuided: number;
+  studentsGuided: number;
 }
 
 // 8. Research Papers
@@ -73,9 +94,8 @@ export interface AppraisalData {
   generalDetails?: GeneralDetailsSection;
   conferenceEvents?: ConferenceSection;
   lecturesTutorials?: LecturesTutorialsSection;
-  // For not-yet-modeled sections, use a generic, typed placeholder
-  readingMaterial?: ScoredItem & Record<string, unknown>;
-  projectGuidance?: ScoredItem & Record<string, unknown>;
+  readingMaterial?: ReadingMaterialSection;
+  projectGuidance?: ProjectGuidanceSection;
   examDuties?: ScoredItem & Record<string, unknown>;
   studentActivities?: ScoredItem & Record<string, unknown>;
   researchPapers?: ResearchPapersSection;

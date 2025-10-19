@@ -7,6 +7,9 @@ import {
   LecturesTutorialsSection,
   ResearchPaperEntry,
   ResearchPapersSection,
+  ReadingMaterialEntry,
+  ReadingMaterialSection,
+  ProjectGuidanceSection,
 } from './types';
 
 export const calculateGeneralDetailsScore = (data: GeneralDetailsForm | GeneralDetailsSection): number => {
@@ -44,11 +47,25 @@ export const calculateResearchPapersScore = (entries: ResearchPaperEntry[]): num
   }, 0);
 };
 
+export const calculateReadingMaterialScore = (entries: ReadingMaterialEntry[]): number => {
+  // Mock: sum of self-assessed API scores, capped per entry at 5
+  return entries.reduce((total, e) => total + Math.min(Math.max(Number(e.selfAssessedApi) || 0, 0), 5), 0);
+};
+
+export const calculateProjectGuidanceScore = (data: ProjectGuidanceSection): number => {
+  // Mock: 2 points per project and 0.2 per student, rounded
+  const p = Math.max(0, Number(data.projectsGuided) || 0);
+  const s = Math.max(0, Number(data.studentsGuided) || 0);
+  return Math.round(p * 2 + s * 0.2);
+};
+
 type SectionId =
   | 'general-details'
   | 'conference-events'
   | 'lectures-tutorials'
   | 'research-papers'
+  | 'reading-material'
+  | 'project-guidance'
   | (string & {});
 
 type SectionPayloadMap = {
@@ -56,6 +73,8 @@ type SectionPayloadMap = {
   'conference-events': ConferenceSection | { entries: ConferenceEntry[] };
   'lectures-tutorials': LecturesTutorialsSection;
   'research-papers': ResearchPapersSection | { entries: ResearchPaperEntry[] };
+  'reading-material': ReadingMaterialSection | { entries: ReadingMaterialEntry[] };
+  'project-guidance': ProjectGuidanceSection;
 };
 
 export const simulateApiCall = <T extends SectionId>(
@@ -81,6 +100,12 @@ export const simulateApiCall = <T extends SectionId>(
           break;
         case 'research-papers':
           score = calculateResearchPapersScore((data as ResearchPapersSection | { entries: ResearchPaperEntry[] }).entries || []);
+          break;
+        case 'reading-material':
+          score = calculateReadingMaterialScore((data as ReadingMaterialSection | { entries: ReadingMaterialEntry[] }).entries || []);
+          break;
+        case 'project-guidance':
+          score = calculateProjectGuidanceScore(data as ProjectGuidanceSection);
           break;
         default:
           score = 5; // Default score for other sections
