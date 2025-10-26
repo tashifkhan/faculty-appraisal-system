@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'appraisal_form_injestion',
+    'faculty_admin',
 ]
 
 MIDDLEWARE = [
@@ -149,3 +150,4 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 MONGO_URI = os.getenv('MONGO_URI','mongodb://localhost:27017/')
 APPRAISAL_SYSTEM_MONGO_DB_NAME = os.getenv('APPRAISAL_SYSTEM_MONGO_DB_NAME','faculty_appraisal_db')
 DATA_INJECTION_COLLECTION_NAME = os.getenv('DATA_INJECTION_COLLECTION_NAME','form_data_collection')
+FACULTY_DATA_COLLECTION_NAME = os.getenv('FACULTY_DATA_COLLECTION_NAME','faculty_data_collection')
