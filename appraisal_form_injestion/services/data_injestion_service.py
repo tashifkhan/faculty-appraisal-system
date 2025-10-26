@@ -44,6 +44,7 @@ class DataInjestionService:
             }}
 
             self.data_injestion_mongo_client.update_data_injestion_collection(user_id, result_data)
+            return {"score": total_score,"api_score_list": api_score_list}
         except Exception as e:
             logger.error(f"Error injesting data 11: {e}")
             raise e
@@ -58,6 +59,7 @@ class DataInjestionService:
             }}
 
             self.data_injestion_mongo_client.update_data_injestion_collection(user_id, result_data)
+            return {"score": score}
         except Exception as e:
             logger.error(f"Error injesting data 12.1: {e}")
             raise e
@@ -78,6 +80,7 @@ class DataInjestionService:
                 }
             }
             self.data_injestion_mongo_client.update_data_injestion_collection(user_id, result_data)
+            return {"score": min(score,30)}
         except Exception as e:
             logger.error(f"Error injesting data 12.3: {e}")
             raise e
@@ -98,6 +101,7 @@ class DataInjestionService:
                 }
             }
             self.data_injestion_mongo_client.update_data_injestion_collection(user_id, result_data)
+            return {"score": min(total_score,60),"api_score_dict": api_score_dict}
         except Exception as e:
             logger.error(f"Error injesting data 13: {e}")
             raise e
@@ -119,6 +123,7 @@ class DataInjestionService:
                 }
             }
             self.data_injestion_mongo_client.update_data_injestion_collection(user_id, result_data)
+            return {"score": total_score,"api_score_list": api_score_list}
         except Exception as e:
             logger.error(f"Error injesting data 14: {e}")
             raise e
@@ -140,6 +145,7 @@ class DataInjestionService:
                 }
             }
             self.data_injestion_mongo_client.update_data_injestion_collection(user_id, result_data)
+            return {"score": total_score,"api_score_list": api_score_list}
         except Exception as e:
             logger.error(f"Error injesting data 15: {e}")
             raise e
@@ -161,6 +167,7 @@ class DataInjestionService:
                 }
             }
             self.data_injestion_mongo_client.update_data_injestion_collection(user_id, result_data)
+            return {"score": total_score,"api_score_list": api_score_list}
         except Exception as e:
             logger.error(f"Error injesting data 16: {e}")
             raise e
@@ -181,6 +188,7 @@ class DataInjestionService:
                 }
             }
             self.data_injestion_mongo_client.update_data_injestion_collection(user_id, result_data)
+            return {"score": total_score,"api_score_list": api_score_list}
         except Exception as e:
             logger.error(f"Error injesting data 17: {e}")
             raise e
@@ -204,6 +212,7 @@ class DataInjestionService:
                 }
             }
             self.data_injestion_mongo_client.update_data_injestion_collection(user_id, result_data)
+            return {"score": total_score,"api_score_list": api_score_list}
         except Exception as e:
             logger.error(f"Error injesting data 18: {e}")
             raise e
@@ -225,6 +234,7 @@ class DataInjestionService:
 
                 total_score += score
                 api_score_dict[type] = score
+
             result_data = {
                 "19":{
                     "data": data,
@@ -233,6 +243,7 @@ class DataInjestionService:
                 }
             }
             self.data_injestion_mongo_client.update_data_injestion_collection(user_id, result_data)
+            return {"score": total_score,"api_score_dict": api_score_dict}
         except Exception as e:
             logger.error(f"Error injesting data 19: {e}")
             raise e

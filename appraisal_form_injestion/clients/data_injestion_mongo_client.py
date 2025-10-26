@@ -26,3 +26,12 @@ class DataInjestionMongoClient(AbstractMongoDBClient):
         except Exception as e:
             logger.error(f"Error updating data injestion collection: {e}")
             raise e
+
+    def get_data_injestion_collection_by_user_id_and_section(self, user_id:str, section:str):
+        try:
+            projection = {"_id": 0, "user_id":1, f"{section}":1}
+            result = self.find_one(settings.DATA_INJECTION_COLLECTION_NAME, {"user_id": user_id}, projection)
+            return result
+        except Exception as e:
+            logger.error(f"Error getting data injestion collection by user id and section: {e}")
+            raise e
