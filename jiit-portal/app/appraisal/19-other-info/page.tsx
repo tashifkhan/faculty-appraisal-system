@@ -196,7 +196,6 @@ export default function OtherInfoPage() {
 									<thead className="bg-muted/50 text-muted-foreground">
 										<tr>
 											<th className="px-4 py-3 text-left w-[70%]">Details</th>
-											<th className="px-4 py-3 text-left w-[20%]">Points</th>
 											<th className="px-4 py-3 w-[10%]"></th>
 										</tr>
 									</thead>
@@ -211,22 +210,6 @@ export default function OtherInfoPage() {
 														}
 														placeholder="Describe the activity, achievement, or contribution..."
 														rows={2}
-													/>
-												</td>
-												<td className="p-3">
-													<Input
-														type="number"
-														value={Number(e.points)}
-														onChange={(ev) =>
-															updateSelfEntry(
-																e.id,
-																"points",
-																Number(ev.target.value) || 0
-															)
-														}
-														placeholder="0-30"
-														min="0"
-														max="30"
 													/>
 												</td>
 												<td className="p-3 text-right">
