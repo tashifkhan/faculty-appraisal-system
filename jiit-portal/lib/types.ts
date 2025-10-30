@@ -208,13 +208,21 @@ export interface ResearchProjectsSection extends ScoredItem {
 export type ResearchGuidanceLevel = 'PhD' | 'MTech' | 'BTech';
 export type ResearchGuidanceStatus = 'Completed' | 'Ongoing';
 
+export interface ResearchGuidanceAuthor {
+  id: string;
+  name: string;
+  authorType: string;
+}
+
 export interface ResearchGuidanceEntry {
   id: string;
-  enrolmentAndName: string; // Enrol. No. & Name
-  title: string; // Title of Thesis/Dissertation/Project
-  jointSupervisors: string;
-  level: ResearchGuidanceLevel;
-  status: ResearchGuidanceStatus;
+  title: string;
+  enrollNoAndName: string;
+  degree: string;
+  status: string;
+  monthsOngoing: number;
+  userAuthorType: string;
+  otherAuthors: ResearchGuidanceAuthor[];
 }
 
 export interface ResearchGuidanceSection extends ScoredItem {
