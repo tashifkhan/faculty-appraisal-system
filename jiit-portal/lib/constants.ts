@@ -8,7 +8,7 @@ export const APPRAISAL_SECTIONS = [
   { id: '13-student-activities', title: '7. Student Activities', route: '/appraisal/13-student-activities' },
   { id: '14-research-papers', title: '8. Research Papers', route: '/appraisal/14-research-papers' },
   { id: '15-books-chapters', title: '9. Books & Chapters', route: '/appraisal/15-books-chapters' },
-  { id: 'research-projects', title: '10. Research Projects', route: '/appraisal/research-projects' },
+  { id: '16-research-projects', title: '10. Research Projects', route: '/appraisal/16-research-projects' },
   { id: 'research-guidance', title: '11. Research Guidance', route: '/appraisal/research-guidance' },
   { id: 'memberships', title: '12. Memberships', route: '/appraisal/memberships' },
 ] as const;

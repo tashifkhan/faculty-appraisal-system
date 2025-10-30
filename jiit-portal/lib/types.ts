@@ -179,17 +179,25 @@ export interface UserProfile {
 
 // 10. Research Projects & Consultancy Works
 export type ResearchProjectStatus = 'Completed' | 'Ongoing';
-export type ResearchProjectRole = 'Chief Investigator' | 'Co-Investigator';
+
+export interface ResearchProjectAuthor {
+  id: string;
+  name: string;
+  authorType: string;
+}
 
 export interface ResearchProjectEntry {
   id: string;
-  title: string; // Title of Project / Consultancy
+  title: string;
   sponsoringAgency: string;
-  duration: string; // e.g., '2 years', '6 months'
-  sanctionDate: string; // e.g., '2023-03-20' (ISO) or display string
-  status: ResearchProjectStatus;
-  amountSanctioned: number; // amount in currency units
-  role: ResearchProjectRole;
+  duration: string;
+  sanctionDate: string;
+  status: string;
+  isHss: boolean;
+  amountSanctioned: number;
+  isConsultancy: boolean;
+  userAuthorType: string;
+  otherAuthors: ResearchProjectAuthor[];
 }
 
 export interface ResearchProjectsSection extends ScoredItem {
