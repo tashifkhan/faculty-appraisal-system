@@ -5,6 +5,14 @@ import { useRouter } from "next/navigation";
 import AppraisalLayout from "@/components/AppraisalLayout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+	Select,
+	SelectContent,
+	SelectItem,
+	SelectTrigger,
+	SelectValue,
+} from "@/components/ui/select";
 import {
 	Card,
 	CardContent,
@@ -24,11 +32,11 @@ export default function MembershipsPage() {
 	const [isSubmitting, setIsSubmitting] = useState(false);
 	const [apiScore, setApiScore] = useState<number | null>(null);
 	const [entries, setEntries] = useState<MembershipEntry[]>([
-		{ id: crypto.randomUUID(), detail: "" },
+		{ id: crypto.randomUUID(), positionType: "", membershipDetails: "" },
 	]);
 
 	const currentIndex = APPRAISAL_SECTIONS.findIndex(
-		(s) => s.id === "memberships"
+		(s) => s.id === "18-memberships"
 	);
 	const prevSection = APPRAISAL_SECTIONS[currentIndex - 1];
 	const nextSection = APPRAISAL_SECTIONS[currentIndex + 1];
@@ -51,14 +59,21 @@ export default function MembershipsPage() {
 	}, []);
 
 	const addEntry = () =>
-		setEntries((list) => [...list, { id: crypto.randomUUID(), detail: "" }]);
+		setEntries((list) => [
+			...list,
+			{ id: crypto.randomUUID(), positionType: "", membershipDetails: "" },
+		]);
 	const removeEntry = (id: string) =>
 		setEntries((list) =>
 			list.length > 1 ? list.filter((e) => e.id !== id) : list
 		);
-	const updateEntry = (id: string, value: string) =>
+	const updateEntry = <K extends keyof MembershipEntry>(
+		id: string,
+		key: K,
+		value: MembershipEntry[K]
+	) =>
 		setEntries((list) =>
-			list.map((e) => (e.id === id ? { ...e, detail: value } : e))
+			list.map((e) => (e.id === id ? { ...e, [key]: value } : e))
 		);
 
 	const payload: MembershipsSection = useMemo(
@@ -102,32 +117,77 @@ export default function MembershipsPage() {
 					)}
 
 					<form onSubmit={onSubmit} className="space-y-6">
-						<div className="space-y-3">
-							{entries.map((e) => (
-								<div
-									key={e.id}
-									className="flex items-center gap-3 rounded-lg border p-3"
-								>
-									<div className="flex-1">
-										<p className="text-xs text-muted-foreground mb-1">
-											Membership Detail
-										</p>
-										<Input
-											value={e.detail}
-											onChange={(ev) => updateEntry(e.id, ev.target.value)}
-											placeholder="e.g., IEEE (Sr. Member), MIR Labs"
-										/>
-									</div>
-									<Button
-										type="button"
-										variant="ghost"
-										size="icon"
-										onClick={() => removeEntry(e.id)}
-									>
-										<Trash2 className="h-4 w-4" />
-									</Button>
-								</div>
-							))}
+						<div className="rounded-lg border overflow-x-auto">
+							<table className="w-full text-sm">
+								<thead className="bg-muted/50 text-muted-foreground">
+									<tr>
+										<th className="px-4 py-3 text-left w-[30%]">
+											Position Type
+										</th>
+										<th className="px-4 py-3 text-left w-[60%]">
+											Membership Details
+										</th>
+										<th className="px-4 py-3 w-[10%]"></th>
+									</tr>
+								</thead>
+								<tbody>
+									{entries.map((e) => (
+										<tr key={e.id} className="border-t align-top">
+											<td className="p-3">
+												<Select
+													value={e.positionType}
+													onValueChange={(value) =>
+														updateEntry(e.id, "positionType", value)
+													}
+												>
+													<SelectTrigger>
+														<SelectValue placeholder="Select type" />
+													</SelectTrigger>
+													<SelectContent>
+														<SelectItem value="Member">Member</SelectItem>
+														<SelectItem value="Senior Member">
+															Senior Member
+														</SelectItem>
+														<SelectItem value="Fellow">Fellow</SelectItem>
+														<SelectItem value="Life Member">
+															Life Member
+														</SelectItem>
+														<SelectItem value="Associate Member">
+															Associate Member
+														</SelectItem>
+														<SelectItem value="Honorary Member">
+															Honorary Member
+														</SelectItem>
+													</SelectContent>
+												</Select>
+											</td>
+											<td className="p-3">
+												<Input
+													value={e.membershipDetails}
+													onChange={(ev) =>
+														updateEntry(
+															e.id,
+															"membershipDetails",
+															ev.target.value
+														)
+													}
+													placeholder="e.g., IEEE - Institute of Electrical and Electronics Engineers"
+												/>
+											</td>
+											<td className="p-3 text-right">
+												<Button
+													type="button"
+													variant="ghost"
+													size="icon"
+													onClick={() => removeEntry(e.id)}
+												>
+													<Trash2 className="h-4 w-4" />
+												</Button>
+											</td>
+										</tr>
+									))}
+								</tbody>
+							</table>
 						</div>
 
 						<Button

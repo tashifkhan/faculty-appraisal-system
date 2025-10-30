@@ -232,7 +232,8 @@ export interface ResearchGuidanceSection extends ScoredItem {
 // 12. Memberships of Professional Bodies
 export interface MembershipEntry {
   id: string;
-  detail: string; // e.g., IEEE (Sr. Member), MIR Labs
+  positionType: string;
+  membershipDetails: string;
 }
 
 export interface MembershipsSection extends ScoredItem {

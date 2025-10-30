@@ -10,7 +10,7 @@ export const APPRAISAL_SECTIONS = [
   { id: '15-books-chapters', title: '9. Books & Chapters', route: '/appraisal/15-books-chapters' },
   { id: '16-research-projects', title: '10. Research Projects', route: '/appraisal/16-research-projects' },
   { id: '17-research-guidance', title: '11. Research Guidance', route: '/appraisal/17-research-guidance' },
-  { id: 'memberships', title: '12. Memberships', route: '/appraisal/memberships' },
+  { id: '18-memberships', title: '12. Memberships', route: '/appraisal/18-memberships' },
 ] as const;
 
 export const PUBLICATION_TYPES = [
