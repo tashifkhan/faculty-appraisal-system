@@ -11,6 +11,7 @@ export const APPRAISAL_SECTIONS = [
   { id: '16-research-projects', title: '10. Research Projects', route: '/appraisal/16-research-projects' },
   { id: '17-research-guidance', title: '11. Research Guidance', route: '/appraisal/17-research-guidance' },
   { id: '18-memberships', title: '12. Memberships', route: '/appraisal/18-memberships' },
+  { id: '19-other-info', title: '13. Other Information', route: '/appraisal/19-other-info' },
 ] as const;
 
 export const PUBLICATION_TYPES = [

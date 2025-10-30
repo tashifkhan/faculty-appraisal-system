@@ -168,6 +168,7 @@ export interface AppraisalData {
   researchProjects?: ResearchProjectsSection;
   researchGuidance?: ResearchGuidanceSection;
   memberships?: MembershipsSection;
+  otherInfo?: OtherInfoSection;
   sectionStatus: { [key: string]: SectionStatus };
 }
 
@@ -238,6 +239,19 @@ export interface MembershipEntry {
 
 export interface MembershipsSection extends ScoredItem {
   entries: MembershipEntry[];
+}
+
+// 19. Other Information (API Points)
+export interface OtherInfoEntry {
+  id: string;
+  details: string;
+  points: number;
+}
+
+export interface OtherInfoSection extends ScoredItem {
+  self: OtherInfoEntry[];
+  national: Omit<OtherInfoEntry, "points">[];
+  international: Omit<OtherInfoEntry, "points">[];
 }
 
 // 7. Student Activities (Contribution/Participation in Students Extra & Co‑Curricular activities)
