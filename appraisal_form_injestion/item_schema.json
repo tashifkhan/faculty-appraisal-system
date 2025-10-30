@@ -1,0 +1,484 @@
+item1_post_schema = {
+    "full_name": str,
+    "present_designation": str,
+    "qualifications": str,
+    "department": str,
+    "institute_joining_date": date,
+    "first_designation": str,
+    "present_pay_scale_&_pay": int,
+    "areas_of_specialization_and_current_interest": str,
+    "additional_qualification_acquired": str,
+    "pursuing_higher_studies": str
+}
+
+item1_get_schema = {
+    "user_id": str,
+    "1-10": {
+        "full_name": str,
+        "present_designation": str,
+        "qualifications": str,
+        "department": str,
+        "institute_joining_date": date,
+        "first_designation": str,
+        "present_pay_scale_&_pay": int,
+        "areas_of_specialization_and_current_interest": str,
+        "additional_qualification_acquired": str,
+        "pursuing_higher_studies": str
+    }
+}
+
+item2_post_schema = [
+    {
+        "title": str,
+        "start_date": date,
+        "end_date": date,
+        "attended/organized": bool,
+        "program_type": str,
+        "is_chief_organizer": bool,
+        "sponsoring_agency":str,
+        "organisation_&_place":str
+    },
+    ...
+]
+
+item2_get_schema = {
+    "user_id": str,
+    "11":{
+        "data": [
+            {
+                "title": str,
+                "start_date": date,
+                "end_date": date,
+                "attended/organized": bool,
+                "program_type": str,
+                "is_chief_organizer": bool,
+                "sponsoring_agency":str,
+                "organisation_&_place":str
+            },
+            ...
+        ],
+        "score": int,
+        "api_score_list": [int, ...]
+    }
+}
+
+item3_post_schema = [
+    {
+        "course_code": str,
+        "course_title": str,
+        "contact_hr_per_week": int,
+        "total_hour_scheduled": int,
+        "total_hour_engaged": int
+    },
+    ...
+]
+
+item3_get_schema = {
+    "user_id": str,
+    "12.1_<semester>": {
+        "data": [
+            {
+                "course_code": str,
+                "course_title": str,
+                "contact_hr_per_week": int,
+                "total_hour_scheduled": int,
+                "total_hour_engaged": int
+            },
+            ...
+        ],
+        "score": int
+    }
+}
+
+item5_post_schema = {
+    "12.3": {
+        "number_of_projects_guided": int,
+        "number_of_students_guided": int
+    },
+    "12.4": [
+        {
+            "activity": str,
+            "class": str,
+            "t1": int,
+            "t2": int,
+            "t3": int,
+        },
+        ...
+    ]
+}
+
+item5_get_schema = {
+    "user_id": str,
+    "12.3-12.4": {
+        "data": {
+            "12.3": {
+                "number_of_projects_guided": int,
+                "number_of_students_guided": int
+            },
+            "12.4": [
+                {
+                    "activity": str,
+                    "class": str,
+                    "t1": int,
+                    "t2": int,
+                    "t3": int,
+                },
+                ...
+            ]
+        },
+        "score": int
+    }
+}
+
+item6_post_schema = {
+    "A": [
+        {
+            "name_of_club":str,
+            "played_lead_role":bool,
+            "details_of_activities":str
+        },
+        ...
+    ],
+    "B": [
+        {
+            "role":str,
+            "details_of_activities":str
+        },
+        ...
+    ],
+    "C": [
+        {
+            "position_type":str,
+            "details_of_activities":str
+        },
+        ...
+    ],
+    "D": [
+        {
+            "nature":str,
+            "details_of_activities":str
+        },
+        ...
+    ],
+    "E": [
+        {
+            "points":int,
+            "details_of_activities":str
+        },
+        ...
+    ]
+}
+
+item6_get_schema = {
+    "user_id": str,
+    "13": {
+        "data": {
+            "A": [
+                {
+                    "name_of_club":str,
+                    "played_lead_role":bool,
+                    "details_of_activities":str
+                },
+                ...
+            ],
+            "B": [
+                {
+                    "role":str,
+                    "details_of_activities":str
+                },
+                ...
+            ],
+            "C": [
+                {
+                    "position_type":str,
+                    "details_of_activities":str
+                },
+                ...
+            ],
+            "D": [
+                {
+                    "nature":str,
+                    "details_of_activities":str
+                },
+                ...
+            ],
+            "E": [
+                {
+                    "points":int,
+                    "details_of_activities":str
+                },
+                ...
+            ]
+        },
+        "score": int,
+        "api_score_dict": {
+            "A": int,
+            "B": int,
+            "C": int,
+            "D": int,
+            "E": int
+        }
+    }
+}
+
+item7_post_schema = [
+    {
+        "title_and_complete_reference": str,
+        "pub_type": str,
+        "isbn_issn": str,
+        "indexed": bool,
+        "impact_factor": int,
+        "user_author_type": str,
+        "other_authors": [
+            {
+                "name": str,
+                "author_type": str
+            },
+            ...
+        ]
+    },
+    ...
+]
+
+item7_get_schema = {
+    "user_id": str,
+    "14": {
+        "data": [
+            {
+                "title_and_complete_reference": str,
+                "pub_type": str,
+                "isbn_issn": str,
+                "indexed": bool,
+                "impact_factor": int,
+                "user_author_type": str,
+                "other_authors": [
+                    {
+                        "name": str,
+                        "author_type": str
+                    },
+                    ...
+                ]
+            },
+            ...
+        ],
+        "score": int,
+        "api_score_list": [int, ...]
+    }
+}
+
+item8_post_schema = [
+    {
+        "title_and_complete_reference": str,
+        "publisher_type": str,
+        "is_chapter": bool,
+        "number_of_chapters": int,
+        "user_author_type": str,
+        "other_authors": [
+            {
+                "name": str,
+                "author_type": str
+            },
+            ...
+        ]
+    },
+    ...
+]
+
+item8_get_schema = {
+    "user_id": str,
+    "15": {
+        "data": [
+            {
+                "title_and_complete_reference": str,
+                "publisher_type": str,
+                "is_chapter": bool,
+                "number_of_chapters": int,
+                "user_author_type": str,
+                "other_authors": [
+                    {
+                        "name": str,
+                        "author_type": str
+                    },
+                    ...
+                ]
+            },
+            ...
+        ],
+        "score": int,
+        "api_score_list": [int, ...]
+    }
+}
+
+item9_post_schema = [
+    {
+        "title": str,
+        "sponsoring_agency": str,
+        "duration": str,
+        "sanction_date": date,
+        "status": str,
+        "is_hss": bool,
+        "amount_sanctioned": float,
+        "is_consultancy": bool,
+        "user_author_type": str,
+        "other_authors": [
+            {
+                "name": str,
+                "author_type": str
+            },
+            ...
+        ]
+    },
+    ...
+]
+
+item9_get_schema = {
+    "user_id": str,
+    "16": {
+        "data": [
+            {
+                "title": str,
+                "sponsoring_agency": str,
+                "duration": str,
+                "sanction_date": date,
+                "status": str,
+                "is_hss": bool,
+                "amount_sanctioned": float,
+                "is_consultancy": bool,
+                "user_author_type": str,
+                "other_authors": [
+                    {
+                        "name": str,
+                        "author_type": str
+                    },
+                    ...
+                ]
+            },
+            ...
+        ],
+        "score": int,
+        "api_score_list": [int, ...]
+    }
+}
+
+item10_post_schema = [
+    {
+        "title": str,
+        "enroll_no_and_name": str,
+        "degree": str,
+        "status": str,
+        "months_ongoing": int,
+        "user_author_type": str,
+        "other_authors": [
+            {
+                "name": str,
+                "author_type": str
+            },
+            ...
+        ]
+    },
+    ...
+]
+
+item10_get_schema = {
+    "user_id": str,
+    "17": {
+        "data": [
+            {
+                "title": str,
+                "enroll_no_and_name": str,
+                "degree": str,
+                "status": str,
+                "months_ongoing": int,
+                "user_author_type": str,
+                "other_authors": [
+                    {
+                        "name": str,
+                        "author_type": str
+                    },
+                    ...
+                ]
+            },
+            ...
+        ],
+        "score": int,
+        "api_score_list": [int, ...]
+    }
+}
+
+item11_post_schema = [
+    {
+        "position_type": str,
+        "membership_details":str
+    },
+    ...
+]
+
+item11_get_schema = {
+    "user_id": str,
+    "18": {
+        "data": [
+            {
+                "position_type": str,
+                "membership_details":str
+            },
+            ...
+        ],
+        "score": int,
+        "api_score_list": [int, ...]
+    }
+}
+
+item12_post_schema = {
+    "self": [
+        {
+            "details":str,
+            "points": int,
+        },
+        ...
+    ],
+    "national": [
+        {
+            "details":str
+        },
+        ...
+    ],
+    "international": [
+        {
+            "details":str
+        },
+        ...
+    ]
+}
+
+item12_get_schema = {
+    "user_id": str,
+    "19": {
+        "data": {
+            "self": [
+                {
+                    "details":str,
+                    "points": int
+                },
+                ...
+            ],
+            "national": [
+                {
+                    "details":str
+                },
+                ...
+            ],
+            "international": [
+                {
+                    "details":str
+                },
+                ...
+            ]
+        },
+        "score": int,
+        "api_score_dict": {
+            "self": int,
+            "national": int,
+            "international": int
+        }
+    }
+}

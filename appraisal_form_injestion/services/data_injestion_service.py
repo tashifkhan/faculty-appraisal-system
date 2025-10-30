@@ -13,7 +13,9 @@ class DataInjestionService:
 
     def injest_data_item1_to_10(self, user_id:str, data:Dict):
         try:
-            data = {"1-10": data}
+            data = {"1-10": {
+                        "data":data
+                    }}
             self.data_injestion_mongo_client.update_data_injestion_collection(user_id, data)
         except Exception as e:
             logger.error(f"Error injesting data 1 to 10: {e}")
@@ -26,7 +28,7 @@ class DataInjestionService:
             api_score_list = []
 
             for item in data:
-                api_points,seminar_attended = calculate_api_score_for_item11(item["status"], item["type"], item["is_chief_organizer"], item["start_date"], item["end_date"])
+                api_points,seminar_attended = calculate_api_score_for_item11(item["attended/organized"], item["program_type"], item["is_chief_organizer"], item["start_date"], item["end_date"])
                 item["api_score"] = api_points
                 api_score_list.append(api_points)
                 if seminar_attended:

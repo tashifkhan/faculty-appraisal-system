@@ -198,7 +198,7 @@ def calculate_api_score_for_item14(publication: Dict):
             - pub_type (str): 'IJ','NJ','OJ','IC','NC','LC','PN','OA'
             - isbn_issn (str): ISBN/ISSN/Other
             - indexed (bool): Is Indexed Journal (optional, default False)
-            - impact_factor (float): Impact factor value (optional)
+            - impact_factor (int): Impact factor value (optional)
             - user_author_type (str): "First/Principal Author"/"Corresponding Author/Supervisor/Mentor"/"Other"
             - other_authors (list of dict): List of author dicts, each containing "name", "author_type"
     Returns:
@@ -241,7 +241,7 @@ def calculate_api_score_for_item14(publication: Dict):
     # Augmentation: based on Impact Factor
     impact_factor = int(publication.get("impact_factor", 0))
     try:
-        impact_factor = float(impact_factor) if impact_factor else 0
+        impact_factor = int(impact_factor) if impact_factor else 0
     except Exception:
         impact_factor = 0
     if impact_factor > 0:
@@ -390,7 +390,7 @@ def calculate_api_score_for_item16(project: Dict):
     """
 
     is_hss_mgmt = bool(project.get("is_hss", False))
-    grant_amount = float(project.get("grant_amount", 0))
+    grant_amount = float(project.get("amount_sanctioned", 0))
     is_consultancy = bool(project.get("is_consultancy", False))
     user_author_type = str(project.get("user_author_type", "")).lower()
     other_authors = project.get("other_authors", []) or []
