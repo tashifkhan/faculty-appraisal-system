@@ -358,7 +358,7 @@ export default function ResearchPapers() {
 											</Button>
 										</div>
 
-										{entry.otherAuthors.map((author, authorIndex) => (
+										{entry.otherAuthors.map((author) => (
 											<div
 												key={author.id}
 												className="grid grid-cols-1 md:grid-cols-3 gap-3 p-3 rounded-lg border bg-muted/30"
