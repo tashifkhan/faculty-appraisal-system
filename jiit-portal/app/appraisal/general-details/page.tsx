@@ -50,8 +50,7 @@ export default function GeneralDetails() {
 	useEffect(() => {
 		const existingData = getSectionData("generalDetails");
 		if (existingData) {
-			const { apiScore, hodRemarks, ...formData } =
-				existingData as GeneralDetailsSection;
+			const { ...formData } = existingData as GeneralDetailsSection;
 			reset(formData);
 			setApiScore(existingData.apiScore ?? null);
 		}

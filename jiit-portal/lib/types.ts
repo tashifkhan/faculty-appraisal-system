@@ -98,11 +98,20 @@ export interface ExamDutiesSection extends ScoredItem {
 // 9. Books & Chapters in Books Written
 export type BookChapterType = 'B' | 'C'; // B-Book, C-Chapter
 
+export interface BookChapterAuthor {
+  id: string;
+  name: string;
+  authorType: string;
+}
+
 export interface BookChapterEntry {
   id: string;
-  authors: string;
-  titleAndReference: string;
-  publicationType: BookChapterType; // 'B' for Book, 'C' for Chapter
+  titleAndCompleteReference: string;
+  publisherType: string;
+  isChapter: boolean;
+  numberOfChapters: number;
+  userAuthorType: string;
+  otherAuthors: BookChapterAuthor[];
 }
 
 export interface BooksChaptersSection extends ScoredItem {
@@ -110,11 +119,30 @@ export interface BooksChaptersSection extends ScoredItem {
 }
 
 // 8. Research Papers
+export enum PublicationType {
+  IJ = "IJ",
+  NJ = "NJ",
+  IC = "IC",
+  PN = "PN",
+  OA = "OA",
+  OJ = "OJ"
+}
+
+export interface OtherAuthor {
+  id: string;
+  name: string;
+  authorType: string;
+}
+
 export interface ResearchPaperEntry {
   id: string;
-  authors: string;
-  titleAndReference: string;
-  publicationType: 'IJ' | 'NJ' | 'IC' | 'PN' | 'OA';
+  titleAndCompleteReference: string;
+  pubType: PublicationType;
+  isbnIssn: string;
+  indexed: boolean;
+  impactFactor: number;
+  userAuthorType: string;
+  otherAuthors: OtherAuthor[];
 }
 
 export interface ResearchPapersSection {
@@ -140,6 +168,7 @@ export interface AppraisalData {
   researchProjects?: ResearchProjectsSection;
   researchGuidance?: ResearchGuidanceSection;
   memberships?: MembershipsSection;
+  otherInfo?: OtherInfoSection;
   sectionStatus: { [key: string]: SectionStatus };
 }
 
@@ -151,17 +180,25 @@ export interface UserProfile {
 
 // 10. Research Projects & Consultancy Works
 export type ResearchProjectStatus = 'Completed' | 'Ongoing';
-export type ResearchProjectRole = 'Chief Investigator' | 'Co-Investigator';
+
+export interface ResearchProjectAuthor {
+  id: string;
+  name: string;
+  authorType: string;
+}
 
 export interface ResearchProjectEntry {
   id: string;
-  title: string; // Title of Project / Consultancy
+  title: string;
   sponsoringAgency: string;
-  duration: string; // e.g., '2 years', '6 months'
-  sanctionDate: string; // e.g., '2023-03-20' (ISO) or display string
-  status: ResearchProjectStatus;
-  amountSanctioned: number; // amount in currency units
-  role: ResearchProjectRole;
+  duration: string;
+  sanctionDate: string;
+  status: string;
+  isHss: boolean;
+  amountSanctioned: number;
+  isConsultancy: boolean;
+  userAuthorType: string;
+  otherAuthors: ResearchProjectAuthor[];
 }
 
 export interface ResearchProjectsSection extends ScoredItem {
@@ -172,13 +209,21 @@ export interface ResearchProjectsSection extends ScoredItem {
 export type ResearchGuidanceLevel = 'PhD' | 'MTech' | 'BTech';
 export type ResearchGuidanceStatus = 'Completed' | 'Ongoing';
 
+export interface ResearchGuidanceAuthor {
+  id: string;
+  name: string;
+  authorType: string;
+}
+
 export interface ResearchGuidanceEntry {
   id: string;
-  enrolmentAndName: string; // Enrol. No. & Name
-  title: string; // Title of Thesis/Dissertation/Project
-  jointSupervisors: string;
-  level: ResearchGuidanceLevel;
-  status: ResearchGuidanceStatus;
+  title: string;
+  enrollNoAndName: string;
+  degree: string;
+  status: string;
+  monthsOngoing: number;
+  userAuthorType: string;
+  otherAuthors: ResearchGuidanceAuthor[];
 }
 
 export interface ResearchGuidanceSection extends ScoredItem {
@@ -188,66 +233,71 @@ export interface ResearchGuidanceSection extends ScoredItem {
 // 12. Memberships of Professional Bodies
 export interface MembershipEntry {
   id: string;
-  detail: string; // e.g., IEEE (Sr. Member), MIR Labs
+  positionType: string;
+  membershipDetails: string;
 }
 
 export interface MembershipsSection extends ScoredItem {
   entries: MembershipEntry[];
 }
 
-// 7. Student Activities (Contribution/Participation in Students Extra & Co‑Curricular activities)
-export interface IndustryExpert {
+// 19. Other Information (API Points)
+export interface OtherInfoEntry {
   id: string;
-  name: string;
-  profile: string;
-  company: string;
-  emailId: string;
-  cellNumber: string;
-  startDate: string; // ISO date
-  endDate: string; // ISO date
-  durationHours: number;
-}
-
-// SECTION 13A — Student Technical Communities / Clubs
-export interface TechCommunityActivity {
-  id: string;
-  communityName: string; // e.g., "Google Developer Group (GDG) Hub"
-  role: string; // e.g., "Faculty Coordinator"
-  contributionDetails: string; // Description of responsibilities
-}
-
-// SECTION 13B — Organized Competitions / Hackathons
-export interface StudentEvent {
-  id: string;
-  eventName: string; // e.g., "Bit‑Box 2.0"
-  eventType: string; // e.g., "Hackathon" | "Competition"
-  eventDates: string; // e.g., "4–6 March 2022"
-  theme: string; // e.g., "Google Solution Challenge"
-  facultyRole: string; // e.g., "Event Chair", "Organizer"
-  description: string;
-  expertsInvited: IndustryExpert[]; // nested table
-}
-
-// SECTION 13C — Mentorship and Internal Competitions
-export interface MentorshipActivity {
-  id: string;
-  programName: string; // e.g., "Smart India Hackathon"
-  involvementType: string; // e.g., "Mentor" | "Coordinator"
-  details: string; // description
-}
-
-// SECTION 13D — Other Co‑Curricular Contributions
-export interface OtherContribution {
-  id: string;
-  title: string;
   details: string;
+  points: number;
+}
+
+export interface OtherInfoSection extends ScoredItem {
+  self: OtherInfoEntry[];
+  national: Omit<OtherInfoEntry, "points">[];
+  international: Omit<OtherInfoEntry, "points">[];
+}
+
+// 7. Student Activities (Contribution/Participation in Students Extra & Co‑Curricular activities)
+
+// SECTION 13A — Societies/Hubs (incorporate event details)
+export interface SocietyActivity {
+  id: string;
+  nameOfClub: string;
+  playedLeadRole: boolean;
+  detailsOfActivities: string;
+}
+
+// SECTION 13B — Departmental Activities & Development
+export interface DepartmentalActivity {
+  id: string;
+  role: string;
+  detailsOfActivities: string;
+}
+
+// SECTION 13C — Institute Activities & Development
+export interface InstituteActivity {
+  id: string;
+  positionType: string;
+  detailsOfActivities: string;
+}
+
+// SECTION 13D — Special/Extension/Expert/Invited Lectures Delivered
+export interface LectureActivity {
+  id: string;
+  nature: string;
+  detailsOfActivities: string;
+}
+
+// SECTION 13E — Articles, Monographs, Technical Reports, Reviews Written
+export interface ArticleActivity {
+  id: string;
+  points: number;
+  detailsOfActivities: string;
 }
 
 export interface StudentActivitiesForm {
-  techCommunities: (TechCommunityActivity & ScoredItem)[];
-  studentEvents: (StudentEvent & ScoredItem)[];
-  mentorships: (MentorshipActivity & ScoredItem)[];
-  otherContributions: (OtherContribution & ScoredItem)[];
+  A: SocietyActivity[];
+  B: DepartmentalActivity[];
+  C: InstituteActivity[];
+  D: LectureActivity[];
+  E: ArticleActivity[];
 }
 
 export interface StudentActivitiesSection extends StudentActivitiesForm, ScoredItem {}

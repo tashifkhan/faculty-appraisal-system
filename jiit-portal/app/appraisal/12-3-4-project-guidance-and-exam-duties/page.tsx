@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import AppraisalLayout from "@/components/AppraisalLayout";
 import {
@@ -121,7 +121,7 @@ export default function ProjectGuidanceAndExamDutiesPage() {
 			setApiScoreED(resultED.score);
 
 			toast.success("Both sections submitted successfully!");
-		} catch (_e) {
+		} catch {
 			toast.error("Failed to submit sections");
 		} finally {
 			setIsSubmitting(false);
@@ -179,7 +179,7 @@ export default function ProjectGuidanceAndExamDutiesPage() {
 		value: ExamDutyEntry[K]
 	) => {
 		setEntries((list) => {
-			let updatedList = list.map((e) => {
+			const updatedList = list.map((e) => {
 				if (e.id !== id) return e;
 
 				const updated = { ...e, [key]: value };
@@ -209,7 +209,6 @@ export default function ProjectGuidanceAndExamDutiesPage() {
 				currentEntry?.activity === "invigilation_duties" &&
 				key === "activity"
 			) {
-				const newType = "allotted";
 				const pairType = "performed";
 
 				// Check if pair already exists
@@ -310,16 +309,14 @@ export default function ProjectGuidanceAndExamDutiesPage() {
 									</p>
 								</div>
 							)}
-
 							<div className="mb-4 rounded-lg bg-blue-50 dark:bg-blue-950 border border-blue-200 dark:border-blue-800 p-3">
 								<p className="text-sm text-blue-800 dark:text-blue-200">
-									<strong>Note:</strong> When you select "No. of Examination
-									Invigilation Duties", a paired entry (Allotted/Performed) will
-									be automatically created. Both entries will be removed
-									together if you delete one.
+									<strong>Note:</strong> When you select &quot;No. of
+									Examination Invigilation Duties&quot;, a paired entry
+									(Allotted/Performed) will be automatically created. Both
+									entries will be removed together if you delete one.
 								</p>
-							</div>
-
+							</div>{" "}
 							<div className="space-y-4">
 								<div className="rounded-lg border overflow-x-auto">
 									<table className="w-full text-sm">

@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import AppraisalLayout from "@/components/AppraisalLayout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import {
 	Card,
 	CardContent,
@@ -21,95 +21,68 @@ import {
 	SelectValue,
 } from "@/components/ui/select";
 import {
-	IndustryExpert,
-	MentorshipActivity,
-	OtherContribution,
+	SocietyActivity,
+	DepartmentalActivity,
+	InstituteActivity,
+	LectureActivity,
+	ArticleActivity,
 	StudentActivitiesSection,
-	StudentEvent,
-	TechCommunityActivity,
 } from "@/lib/types";
 import { getSectionData, updateSectionData } from "@/lib/localStorage";
 import { simulateApiCall } from "@/lib/mockApi";
 import { APPRAISAL_SECTIONS } from "@/lib/constants";
-import {
-	ArrowLeft,
-	ArrowRight,
-	Plus,
-	Save,
-	Trash2,
-	ChevronDown,
-	ChevronUp,
-} from "lucide-react";
+import { ArrowLeft, ArrowRight, Plus, Save, Trash2 } from "lucide-react";
 import { toast } from "sonner";
-
-type RowWithMeta<T> = T & {
-	id: string;
-	apiScore: number | null;
-	hodRemarks?: string;
-};
 
 export default function StudentActivitiesPage() {
 	const router = useRouter();
-	const [activeTab, setActiveTab] = useState<"A" | "B" | "C" | "D">("A");
+	const [activeTab, setActiveTab] = useState<"A" | "B" | "C" | "D" | "E">("A");
 	const [isSubmitting, setIsSubmitting] = useState(false);
 	const [apiScore, setApiScore] = useState<number | null>(null);
 
-	// 13A
-	const [techCommunities, setTechCommunities] = useState<
-		RowWithMeta<TechCommunityActivity>[]
-	>([
+	// Section A: Societies/Hubs
+	const [sectionA, setSectionA] = useState<SocietyActivity[]>([
 		{
 			id: crypto.randomUUID(),
-			communityName: "",
+			nameOfClub: "",
+			playedLeadRole: false,
+			detailsOfActivities: "",
+		},
+	]);
+
+	// Section B: Departmental Activities
+	const [sectionB, setSectionB] = useState<DepartmentalActivity[]>([
+		{
+			id: crypto.randomUUID(),
 			role: "",
-			contributionDetails: "",
-			apiScore: null,
-			hodRemarks: "Pending",
+			detailsOfActivities: "",
 		},
 	]);
 
-	// 13B
-	const [studentEvents, setStudentEvents] = useState<
-		RowWithMeta<StudentEvent>[]
-	>([
+	// Section C: Institute Activities
+	const [sectionC, setSectionC] = useState<InstituteActivity[]>([
 		{
 			id: crypto.randomUUID(),
-			eventName: "",
-			eventType: "Hackathon",
-			eventDates: "",
-			theme: "",
-			facultyRole: "",
-			description: "",
-			expertsInvited: [],
-			apiScore: null,
-			hodRemarks: "Pending",
+			positionType: "",
+			detailsOfActivities: "",
 		},
 	]);
 
-	// 13C
-	const [mentorships, setMentorships] = useState<
-		RowWithMeta<MentorshipActivity>[]
-	>([
+	// Section D: Lectures Delivered
+	const [sectionD, setSectionD] = useState<LectureActivity[]>([
 		{
 			id: crypto.randomUUID(),
-			programName: "",
-			involvementType: "Mentor",
-			details: "",
-			apiScore: null,
-			hodRemarks: "Pending",
+			nature: "",
+			detailsOfActivities: "",
 		},
 	]);
 
-	// 13D
-	const [otherContributions, setOtherContributions] = useState<
-		RowWithMeta<OtherContribution>[]
-	>([
+	// Section E: Articles/Reports Written
+	const [sectionE, setSectionE] = useState<ArticleActivity[]>([
 		{
 			id: crypto.randomUUID(),
-			title: "",
-			details: "",
-			apiScore: null,
-			hodRemarks: "Pending",
+			points: 0,
+			detailsOfActivities: "",
 		},
 	]);
 
@@ -125,74 +98,175 @@ export default function StudentActivitiesPage() {
 			| undefined;
 		if (existing) {
 			setApiScore(existing.apiScore ?? null);
-			setTechCommunities(
-				(existing.techCommunities || []).map((e) => ({
-					id: (e as { id?: string }).id ?? crypto.randomUUID(),
-					communityName: e.communityName,
-					role: e.role,
-					contributionDetails: e.contributionDetails,
-					apiScore: e.apiScore ?? null,
-					hodRemarks: e.hodRemarks ?? "Pending",
-				})) || []
-			);
-
-			setStudentEvents(
-				(existing.studentEvents || []).map((e) => ({
-					id: (e as { id?: string }).id ?? crypto.randomUUID(),
-					eventName: e.eventName,
-					eventType: e.eventType,
-					eventDates: e.eventDates,
-					theme: e.theme,
-					facultyRole: e.facultyRole,
-					description: e.description,
-					expertsInvited: (e.expertsInvited || []).map((x) => ({
-						id: (x as { id?: string }).id ?? crypto.randomUUID(),
-						name: x.name,
-						profile: x.profile,
-						company: x.company,
-						emailId: x.emailId,
-						cellNumber: x.cellNumber,
-						startDate: x.startDate,
-						endDate: x.endDate,
-						durationHours: x.durationHours,
-					})),
-					apiScore: e.apiScore ?? null,
-					hodRemarks: e.hodRemarks ?? "Pending",
-				})) || []
-			);
-
-			setMentorships(
-				(existing.mentorships || []).map((e) => ({
-					id: (e as { id?: string }).id ?? crypto.randomUUID(),
-					programName: e.programName,
-					involvementType: e.involvementType,
-					details: e.details,
-					apiScore: e.apiScore ?? null,
-					hodRemarks: e.hodRemarks ?? "Pending",
-				})) || []
-			);
-
-			setOtherContributions(
-				(existing.otherContributions || []).map((e) => ({
-					id: (e as { id?: string }).id ?? crypto.randomUUID(),
-					title: e.title,
-					details: e.details,
-					apiScore: e.apiScore ?? null,
-					hodRemarks: e.hodRemarks ?? "Pending",
-				})) || []
-			);
+			if (existing.A?.length) {
+				setSectionA(
+					existing.A.map((e) => ({
+						...e,
+						id: e.id || crypto.randomUUID(),
+					}))
+				);
+			}
+			if (existing.B?.length) {
+				setSectionB(
+					existing.B.map((e) => ({
+						...e,
+						id: e.id || crypto.randomUUID(),
+					}))
+				);
+			}
+			if (existing.C?.length) {
+				setSectionC(
+					existing.C.map((e) => ({
+						...e,
+						id: e.id || crypto.randomUUID(),
+					}))
+				);
+			}
+			if (existing.D?.length) {
+				setSectionD(
+					existing.D.map((e) => ({
+						...e,
+						id: e.id || crypto.randomUUID(),
+					}))
+				);
+			}
+			if (existing.E?.length) {
+				setSectionE(
+					existing.E.map((e) => ({
+						...e,
+						id: e.id || crypto.randomUUID(),
+					}))
+				);
+			}
 		}
 	}, []);
 
+	// Section A CRUD operations
+	const addSectionA = () =>
+		setSectionA((list) => [
+			...list,
+			{
+				id: crypto.randomUUID(),
+				nameOfClub: "",
+				playedLeadRole: false,
+				detailsOfActivities: "",
+			},
+		]);
+	const removeSectionA = (id: string) =>
+		setSectionA((list) =>
+			list.length > 1 ? list.filter((e) => e.id !== id) : list
+		);
+	const updateSectionA = <K extends keyof SocietyActivity>(
+		id: string,
+		key: K,
+		value: SocietyActivity[K]
+	) =>
+		setSectionA((list) =>
+			list.map((e) => (e.id === id ? { ...e, [key]: value } : e))
+		);
+
+	// Section B CRUD operations
+	const addSectionB = () =>
+		setSectionB((list) => [
+			...list,
+			{
+				id: crypto.randomUUID(),
+				role: "",
+				detailsOfActivities: "",
+			},
+		]);
+	const removeSectionB = (id: string) =>
+		setSectionB((list) =>
+			list.length > 1 ? list.filter((e) => e.id !== id) : list
+		);
+	const updateSectionB = <K extends keyof DepartmentalActivity>(
+		id: string,
+		key: K,
+		value: DepartmentalActivity[K]
+	) =>
+		setSectionB((list) =>
+			list.map((e) => (e.id === id ? { ...e, [key]: value } : e))
+		);
+
+	// Section C CRUD operations
+	const addSectionC = () =>
+		setSectionC((list) => [
+			...list,
+			{
+				id: crypto.randomUUID(),
+				positionType: "",
+				detailsOfActivities: "",
+			},
+		]);
+	const removeSectionC = (id: string) =>
+		setSectionC((list) =>
+			list.length > 1 ? list.filter((e) => e.id !== id) : list
+		);
+	const updateSectionC = <K extends keyof InstituteActivity>(
+		id: string,
+		key: K,
+		value: InstituteActivity[K]
+	) =>
+		setSectionC((list) =>
+			list.map((e) => (e.id === id ? { ...e, [key]: value } : e))
+		);
+
+	// Section D CRUD operations
+	const addSectionD = () =>
+		setSectionD((list) => [
+			...list,
+			{
+				id: crypto.randomUUID(),
+				nature: "",
+				detailsOfActivities: "",
+			},
+		]);
+	const removeSectionD = (id: string) =>
+		setSectionD((list) =>
+			list.length > 1 ? list.filter((e) => e.id !== id) : list
+		);
+	const updateSectionD = <K extends keyof LectureActivity>(
+		id: string,
+		key: K,
+		value: LectureActivity[K]
+	) =>
+		setSectionD((list) =>
+			list.map((e) => (e.id === id ? { ...e, [key]: value } : e))
+		);
+
+	// Section E CRUD operations
+	const addSectionE = () =>
+		setSectionE((list) => [
+			...list,
+			{
+				id: crypto.randomUUID(),
+				points: 0,
+				detailsOfActivities: "",
+			},
+		]);
+	const removeSectionE = (id: string) =>
+		setSectionE((list) =>
+			list.length > 1 ? list.filter((e) => e.id !== id) : list
+		);
+	const updateSectionE = <K extends keyof ArticleActivity>(
+		id: string,
+		key: K,
+		value: ArticleActivity[K]
+	) =>
+		setSectionE((list) =>
+			list.map((e) => (e.id === id ? { ...e, [key]: value } : e))
+		);
+
 	const sectionPayload: StudentActivitiesSection = useMemo(
 		() => ({
-			techCommunities,
-			studentEvents,
-			mentorships,
-			otherContributions,
+			A: sectionA,
+			B: sectionB,
+			C: sectionC,
+			D: sectionD,
+			E: sectionE,
 			apiScore: null,
 		}),
-		[techCommunities, studentEvents, mentorships, otherContributions]
+		[sectionA, sectionB, sectionC, sectionD, sectionE]
 	);
 
 	const onSubmit = async (e: React.FormEvent) => {
@@ -213,350 +287,16 @@ export default function StudentActivitiesPage() {
 		}
 	};
 
-	const addRow = <T,>(
-		setter: React.Dispatch<React.SetStateAction<RowWithMeta<T>[]>>,
-		row: RowWithMeta<T>
-	) => setter((list) => [...list, row]);
-	const removeRow = <T,>(
-		setter: React.Dispatch<React.SetStateAction<RowWithMeta<T>[]>>,
-		id: string
-	) =>
-		setter((list) =>
-			list.length > 1 ? list.filter((x) => x.id !== id) : list
-		);
-	const updateRow = <T, K extends keyof RowWithMeta<T>>(
-		setter: React.Dispatch<React.SetStateAction<RowWithMeta<T>[]>>,
-		id: string,
-		field: K,
-		value: RowWithMeta<T>[K]
-	) =>
-		setter((list) =>
-			list.map((x) => (x.id === id ? { ...x, [field]: value } : x))
-		);
-
-	const addExpert = (eventId: string) => {
-		setStudentEvents((events) =>
-			events.map((ev) =>
-				ev.id === eventId
-					? {
-							...ev,
-							expertsInvited: [
-								...ev.expertsInvited,
-								{
-									id: crypto.randomUUID(),
-									name: "",
-									profile: "",
-									company: "",
-									emailId: "",
-									cellNumber: "",
-									startDate: "",
-									endDate: "",
-									durationHours: 0,
-								} as IndustryExpert,
-							],
-					  }
-					: ev
-			)
-		);
-	};
-	const removeExpert = (eventId: string, expertId: string) => {
-		setStudentEvents((events) =>
-			events.map((ev) =>
-				ev.id === eventId
-					? {
-							...ev,
-							expertsInvited: ev.expertsInvited.filter(
-								(ex) => ex.id !== expertId
-							),
-					  }
-					: ev
-			)
-		);
-	};
-	const updateExpert = <K extends keyof IndustryExpert>(
-		eventId: string,
-		expertId: string,
-		field: K,
-		value: IndustryExpert[K]
-	) => {
-		setStudentEvents((events) =>
-			events.map((ev) =>
-				ev.id === eventId
-					? {
-							...ev,
-							expertsInvited: ev.expertsInvited.map((ex) =>
-								ex.id === expertId ? { ...ex, [field]: value } : ex
-							),
-					  }
-					: ev
-			)
-		);
-	};
-
-	const EventCard = ({ ev }: { ev: RowWithMeta<StudentEvent> }) => {
-		const [open, setOpen] = useState(true);
-		return (
-			<div className="rounded-lg border p-4 space-y-3">
-				<div className="flex items-center justify-between">
-					<h4 className="font-semibold text-base">Event</h4>
-					<div className="flex items-center gap-2">
-						<Button
-							variant="ghost"
-							size="icon"
-							onClick={() => setOpen((o) => !o)}
-						>
-							{open ? (
-								<ChevronUp className="h-4 w-4" />
-							) : (
-								<ChevronDown className="h-4 w-4" />
-							)}
-						</Button>
-						<Button
-							variant="ghost"
-							size="icon"
-							onClick={() => removeRow(setStudentEvents, ev.id)}
-						>
-							<Trash2 className="h-4 w-4" />
-						</Button>
-					</div>
-				</div>
-				{open && (
-					<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-						<div>
-							<Label className="text-xs">Event Name</Label>
-							<Input
-								value={ev.eventName}
-								onChange={(e) =>
-									updateRow(
-										setStudentEvents,
-										ev.id,
-										"eventName",
-										e.target.value
-									)
-								}
-								placeholder="Bit-Box 2.0"
-							/>
-						</div>
-						<div>
-							<Label className="text-xs">Event Type</Label>
-							<Input
-								value={ev.eventType}
-								onChange={(e) =>
-									updateRow(
-										setStudentEvents,
-										ev.id,
-										"eventType",
-										e.target.value
-									)
-								}
-								placeholder="Hackathon"
-							/>
-						</div>
-						<div>
-							<Label className="text-xs">Dates</Label>
-							<Input
-								value={ev.eventDates}
-								onChange={(e) =>
-									updateRow(
-										setStudentEvents,
-										ev.id,
-										"eventDates",
-										e.target.value
-									)
-								}
-								placeholder="2024-03-15 to 2024-03-16"
-							/>
-						</div>
-						<div>
-							<Label className="text-xs">Theme</Label>
-							<Input
-								value={ev.theme}
-								onChange={(e) =>
-									updateRow(setStudentEvents, ev.id, "theme", e.target.value)
-								}
-								placeholder="AI for Social Good"
-							/>
-						</div>
-						<div>
-							<Label className="text-xs">Faculty Role</Label>
-							<Input
-								value={ev.facultyRole}
-								onChange={(e) =>
-									updateRow(
-										setStudentEvents,
-										ev.id,
-										"facultyRole",
-										e.target.value
-									)
-								}
-								placeholder="Organizer"
-							/>
-						</div>
-						<div className="md:col-span-2">
-							<Label className="text-xs">Description</Label>
-							<Input
-								value={ev.description}
-								onChange={(e) =>
-									updateRow(
-										setStudentEvents,
-										ev.id,
-										"description",
-										e.target.value
-									)
-								}
-								placeholder="Describe the event"
-							/>
-						</div>
-					</div>
-				)}
-
-				{/* Experts table */}
-				<div className="mt-3">
-					<div className="flex items-center justify-between">
-						<p className="text-sm font-medium">Invited Experts</p>
-						<Button
-							type="button"
-							variant="outline"
-							size="sm"
-							onClick={() => addExpert(ev.id)}
-						>
-							<Plus className="h-4 w-4 mr-1" /> Add Expert
-						</Button>
-					</div>
-					<div className="mt-2 overflow-x-auto rounded-lg border">
-						<table className="w-full text-sm">
-							<thead className="bg-muted/50 text-muted-foreground">
-								<tr>
-									<th className="px-3 py-2 text-left">Name</th>
-									<th className="px-3 py-2 text-left">Profile</th>
-									<th className="px-3 py-2 text-left">Company</th>
-									<th className="px-3 py-2 text-left">Email</th>
-									<th className="px-3 py-2 text-left">Cell</th>
-									<th className="px-3 py-2 text-left">Start</th>
-									<th className="px-3 py-2 text-left">End</th>
-									<th className="px-3 py-2 text-left">Hours</th>
-									<th className="px-3 py-2"></th>
-								</tr>
-							</thead>
-							<tbody>
-								{ev.expertsInvited?.map((ex: IndustryExpert) => {
-									const id = ex.id;
-									return (
-										<tr key={id} className="border-t">
-											<td className="px-3 py-2">
-												<Input
-													value={ex.name}
-													onChange={(e) =>
-														updateExpert(ev.id, id, "name", e.target.value)
-													}
-													placeholder="Expert Name"
-												/>
-											</td>
-											<td className="px-3 py-2">
-												<Input
-													value={ex.profile}
-													onChange={(e) =>
-														updateExpert(ev.id, id, "profile", e.target.value)
-													}
-													placeholder="Profile"
-												/>
-											</td>
-											<td className="px-3 py-2">
-												<Input
-													value={ex.company}
-													onChange={(e) =>
-														updateExpert(ev.id, id, "company", e.target.value)
-													}
-													placeholder="Company"
-												/>
-											</td>
-											<td className="px-3 py-2">
-												<Input
-													type="email"
-													value={ex.emailId}
-													onChange={(e) =>
-														updateExpert(ev.id, id, "emailId", e.target.value)
-													}
-													placeholder="Email"
-												/>
-											</td>
-											<td className="px-3 py-2">
-												<Input
-													value={ex.cellNumber}
-													onChange={(e) =>
-														updateExpert(
-															ev.id,
-															id,
-															"cellNumber",
-															e.target.value
-														)
-													}
-													placeholder="Cell"
-												/>
-											</td>
-											<td className="px-3 py-2">
-												<Input
-													value={ex.startDate}
-													onChange={(e) =>
-														updateExpert(ev.id, id, "startDate", e.target.value)
-													}
-													placeholder="YYYY-MM-DD"
-												/>
-											</td>
-											<td className="px-3 py-2">
-												<Input
-													value={ex.endDate}
-													onChange={(e) =>
-														updateExpert(ev.id, id, "endDate", e.target.value)
-													}
-													placeholder="YYYY-MM-DD"
-												/>
-											</td>
-											<td className="px-3 py-2">
-												<Input
-													type="number"
-													value={ex.durationHours}
-													onChange={(e) =>
-														updateExpert(
-															ev.id,
-															id,
-															"durationHours",
-															Number(e.target.value) || 0
-														)
-													}
-													placeholder="1"
-												/>
-											</td>
-											<td className="px-3 py-2 text-right">
-												<Button
-													variant="ghost"
-													size="icon"
-													onClick={() => removeExpert(ev.id, id)}
-												>
-													<Trash2 className="h-4 w-4" />
-												</Button>
-											</td>
-										</tr>
-									);
-								})}
-							</tbody>
-						</table>
-					</div>
-				</div>
-			</div>
-		);
-	};
-
 	return (
 		<AppraisalLayout>
 			<Card>
 				<CardHeader>
 					<CardTitle className="text-2xl">
-						7. Contribution/Participation in Students Extra & Co‑Curricular
-						Activities
+						7. Student Activities (Item 13)
 					</CardTitle>
 					<CardDescription>
-						Fill the four sub-sections below. This mirrors the PDF point 13 A–D.
+						Contribution/Participation in Students Extra & Co-Curricular
+						activities. Total API score for this item will be clipped at 60.
 					</CardDescription>
 				</CardHeader>
 				<CardContent>
@@ -568,298 +308,545 @@ export default function StudentActivitiesPage() {
 						</div>
 					)}
 
-					{/* Tabs */}
-					<div className="border-b mb-4">
-						<div className="flex gap-6">
-							{(
-								[
-									["A", "Societies / Hubs"],
-									["B", "Organized Events "],
-									["C", "Mentorship & Internal Competitions"],
-									["D", "Other Contributions"],
-								] as const
-							).map(([id, label]) => (
-								<button
-									key={id}
-									type="button"
-									onClick={() => setActiveTab(id)}
-									className={`py-2 border-b-2 px-1 text-sm font-medium ${
-										activeTab === id
-											? "border-primary text-primary"
-											: "border-transparent text-muted-foreground"
-									}`}
-								>
-									{label}
-								</button>
-							))}
-						</div>
-					</div>
-
 					<form onSubmit={onSubmit} className="space-y-6">
-						{/* 13A */}
+						{/* Tab Navigation */}
+						<div className="flex gap-2 border-b overflow-x-auto">
+							<button
+								type="button"
+								onClick={() => setActiveTab("A")}
+								className={`px-4 py-2 font-medium text-sm whitespace-nowrap transition-colors ${
+									activeTab === "A"
+										? "border-b-2 border-primary text-primary"
+										: "text-muted-foreground hover:text-foreground"
+								}`}
+							>
+								Societies/Hubs
+							</button>
+							<button
+								type="button"
+								onClick={() => setActiveTab("B")}
+								className={`px-4 py-2 font-medium text-sm whitespace-nowrap transition-colors ${
+									activeTab === "B"
+										? "border-b-2 border-primary text-primary"
+										: "text-muted-foreground hover:text-foreground"
+								}`}
+							>
+								Departmental
+							</button>
+							<button
+								type="button"
+								onClick={() => setActiveTab("C")}
+								className={`px-4 py-2 font-medium text-sm whitespace-nowrap transition-colors ${
+									activeTab === "C"
+										? "border-b-2 border-primary text-primary"
+										: "text-muted-foreground hover:text-foreground"
+								}`}
+							>
+								Institute
+							</button>
+							<button
+								type="button"
+								onClick={() => setActiveTab("D")}
+								className={`px-4 py-2 font-medium text-sm whitespace-nowrap transition-colors ${
+									activeTab === "D"
+										? "border-b-2 border-primary text-primary"
+										: "text-muted-foreground hover:text-foreground"
+								}`}
+							>
+								Lectures
+							</button>
+							<button
+								type="button"
+								onClick={() => setActiveTab("E")}
+								className={`px-4 py-2 font-medium text-sm whitespace-nowrap transition-colors ${
+									activeTab === "E"
+										? "border-b-2 border-primary text-primary"
+										: "text-muted-foreground hover:text-foreground"
+								}`}
+							>
+								Articles
+							</button>
+						</div>
+
+						{/* Section A: Societies/Hubs */}
 						{activeTab === "A" && (
-							<div className="space-y-3">
-								{techCommunities.map((r) => (
-									<div key={r.id} className="rounded-lg border p-4">
-										<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-											<div>
-												<Label className="text-xs">
-													Name of Club/Community
-												</Label>
-												<Input
-													value={r.communityName}
-													onChange={(e) =>
-														updateRow(
-															setTechCommunities,
-															r.id,
-															"communityName",
-															e.target.value
-														)
-													}
-													placeholder="e.g., GDG Hub"
-												/>
-											</div>
-											<div>
-												<Label className="text-xs">Role / Position</Label>
-												<Select
-													value={r.role}
-													onValueChange={(value) =>
-														updateRow(setTechCommunities, r.id, "role", value)
-													}
-												>
-													<SelectTrigger>
-														<SelectValue placeholder="Select role" />
-													</SelectTrigger>
-													<SelectContent>
-														<SelectItem value="lead role">Lead Role</SelectItem>
-														<SelectItem value="member">Member</SelectItem>
-													</SelectContent>
-												</Select>
-											</div>
-											<div className="md:col-span-2">
-												<Label className="text-xs">Details of Activities</Label>
-												<Input
-													value={r.contributionDetails}
-													onChange={(e) =>
-														updateRow(
-															setTechCommunities,
-															r.id,
-															"contributionDetails",
-															e.target.value
-														)
-													}
-													placeholder="Describe activities organized"
-												/>
-											</div>
-										</div>
-										<div className="mt-2 text-right">
-											<Button
-												variant="ghost"
-												size="icon"
-												onClick={() => removeRow(setTechCommunities, r.id)}
-											>
-												<Trash2 className="h-4 w-4" />
-											</Button>
-										</div>
+							<div className="space-y-4">
+								<div className="flex items-center justify-between">
+									<div>
+										<h3 className="text-lg font-semibold">
+											A. Societies/Hubs (Event Details)
+										</h3>
+										<p className="text-sm text-muted-foreground">
+											5 points per activity, 10 if lead role (max 20 points)
+										</p>
 									</div>
-								))}
-								<Button
-									type="button"
-									variant="outline"
-									onClick={() =>
-										addRow(setTechCommunities, {
-											id: crypto.randomUUID(),
-											communityName: "",
-											role: "",
-											contributionDetails: "",
-											apiScore: null,
-											hodRemarks: "Pending",
-										})
-									}
-									className="w-full"
-								>
-									<Plus className="h-4 w-4 mr-2" /> Add Activity
-								</Button>
+									<Button
+										type="button"
+										variant="outline"
+										size="sm"
+										onClick={addSectionA}
+									>
+										<Plus className="h-4 w-4 mr-1" />
+										Add Entry
+									</Button>
+								</div>
+
+								<div className="rounded-lg border overflow-x-auto">
+									<table className="w-full text-sm">
+										<thead className="bg-muted/50 text-muted-foreground">
+											<tr>
+												<th className="px-4 py-3 text-left w-[25%]">
+													Name of Club
+												</th>
+												<th className="px-4 py-3 text-left w-[15%]">
+													Played Lead Role
+												</th>
+												<th className="px-4 py-3 text-left w-[50%]">
+													Details of Activities
+												</th>
+												<th className="px-4 py-3 w-[10%]"></th>
+											</tr>
+										</thead>
+										<tbody>
+											{sectionA.map((e) => (
+												<tr key={e.id} className="border-t align-top">
+													<td className="p-3">
+														<Input
+															value={e.nameOfClub}
+															onChange={(ev) =>
+																updateSectionA(
+																	e.id,
+																	"nameOfClub",
+																	ev.target.value
+																)
+															}
+															placeholder="e.g., Google Developer Group"
+														/>
+													</td>
+													<td className="p-3">
+														<Select
+															value={e.playedLeadRole ? "true" : "false"}
+															onValueChange={(value) =>
+																updateSectionA(
+																	e.id,
+																	"playedLeadRole",
+																	value === "true"
+																)
+															}
+														>
+															<SelectTrigger>
+																<SelectValue />
+															</SelectTrigger>
+															<SelectContent>
+																<SelectItem value="true">Yes</SelectItem>
+																<SelectItem value="false">No</SelectItem>
+															</SelectContent>
+														</Select>
+													</td>
+													<td className="p-3">
+														<Textarea
+															value={e.detailsOfActivities}
+															onChange={(ev) =>
+																updateSectionA(
+																	e.id,
+																	"detailsOfActivities",
+																	ev.target.value
+																)
+															}
+															placeholder="Describe activities, responsibilities, achievements..."
+															rows={2}
+														/>
+													</td>
+													<td className="p-3 text-right">
+														<Button
+															type="button"
+															variant="ghost"
+															size="icon"
+															onClick={() => removeSectionA(e.id)}
+														>
+															<Trash2 className="h-4 w-4" />
+														</Button>
+													</td>
+												</tr>
+											))}
+										</tbody>
+									</table>
+								</div>
 							</div>
 						)}
 
-						{/* 13B */}
+						{/* Section B: Departmental Activities */}
 						{activeTab === "B" && (
-							<div className="space-y-3">
-								{studentEvents.map((ev) => (
-									<EventCard key={ev.id} ev={ev} />
-								))}
-								<Button
-									type="button"
-									variant="outline"
-									onClick={() =>
-										addRow(setStudentEvents, {
-											id: crypto.randomUUID(),
-											eventName: "",
-											eventType: "Hackathon",
-											eventDates: "",
-											theme: "",
-											facultyRole: "",
-											description: "",
-											expertsInvited: [],
-											apiScore: null,
-											hodRemarks: "Pending",
-										})
-									}
-									className="w-full"
-								>
-									<Plus className="h-4 w-4 mr-2" /> Add Event
-								</Button>
+							<div className="space-y-4">
+								<div className="flex items-center justify-between">
+									<div>
+										<h3 className="text-lg font-semibold">
+											B. Departmental Activities & Development
+										</h3>
+										<p className="text-sm text-muted-foreground">
+											5 points for Incharge/Chairman, 3 for member (max 20
+											points)
+										</p>
+									</div>
+									<Button
+										type="button"
+										variant="outline"
+										size="sm"
+										onClick={addSectionB}
+									>
+										<Plus className="h-4 w-4 mr-1" />
+										Add Entry
+									</Button>
+								</div>
+
+								<div className="rounded-lg border overflow-x-auto">
+									<table className="w-full text-sm">
+										<thead className="bg-muted/50 text-muted-foreground">
+											<tr>
+												<th className="px-4 py-3 text-left w-[30%]">Role</th>
+												<th className="px-4 py-3 text-left w-[60%]">
+													Details of Activities
+												</th>
+												<th className="px-4 py-3 w-[10%]"></th>
+											</tr>
+										</thead>
+										<tbody>
+											{sectionB.map((e) => (
+												<tr key={e.id} className="border-t align-top">
+													<td className="p-3">
+														<Select
+															value={e.role}
+															onValueChange={(value) =>
+																updateSectionB(e.id, "role", value)
+															}
+														>
+															<SelectTrigger>
+																<SelectValue placeholder="Select role" />
+															</SelectTrigger>
+															<SelectContent>
+																<SelectItem value="Incharge">
+																	Incharge
+																</SelectItem>
+																<SelectItem value="Chairman">
+																	Chairman
+																</SelectItem>
+																<SelectItem value="Member">Member</SelectItem>
+															</SelectContent>
+														</Select>
+													</td>
+													<td className="p-3">
+														<Textarea
+															value={e.detailsOfActivities}
+															onChange={(ev) =>
+																updateSectionB(
+																	e.id,
+																	"detailsOfActivities",
+																	ev.target.value
+																)
+															}
+															placeholder="Describe departmental activities and contributions..."
+															rows={2}
+														/>
+													</td>
+													<td className="p-3 text-right">
+														<Button
+															type="button"
+															variant="ghost"
+															size="icon"
+															onClick={() => removeSectionB(e.id)}
+														>
+															<Trash2 className="h-4 w-4" />
+														</Button>
+													</td>
+												</tr>
+											))}
+										</tbody>
+									</table>
+								</div>
 							</div>
 						)}
 
-						{/* 13C */}
+						{/* Section C: Institute Activities */}
 						{activeTab === "C" && (
-							<div className="space-y-3">
-								{mentorships.map((m) => (
-									<div key={m.id} className="rounded-lg border p-4">
-										<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-											<div>
-												<Label className="text-xs">Program Name</Label>
-												<Input
-													value={m.programName}
-													onChange={(e) =>
-														updateRow(
-															setMentorships,
-															m.id,
-															"programName",
-															e.target.value
-														)
-													}
-													placeholder="Smart India Hackathon"
-												/>
-											</div>
-											<div>
-												<Label className="text-xs">Involvement Type</Label>
-												<Input
-													value={m.involvementType}
-													onChange={(e) =>
-														updateRow(
-															setMentorships,
-															m.id,
-															"involvementType",
-															e.target.value
-														)
-													}
-													placeholder="Mentor"
-												/>
-											</div>
-											<div className="md:col-span-2">
-												<Label className="text-xs">Details</Label>
-												<Input
-													value={m.details}
-													onChange={(e) =>
-														updateRow(
-															setMentorships,
-															m.id,
-															"details",
-															e.target.value
-														)
-													}
-													placeholder="Provide details"
-												/>
-											</div>
-										</div>
-										<div className="mt-2 text-right">
-											<Button
-												variant="ghost"
-												size="icon"
-												onClick={() => removeRow(setMentorships, m.id)}
-											>
-												<Trash2 className="h-4 w-4" />
-											</Button>
-										</div>
+							<div className="space-y-4">
+								<div className="flex items-center justify-between">
+									<div>
+										<h3 className="text-lg font-semibold">
+											C. Institute Activities & Development
+										</h3>
+										<p className="text-sm text-muted-foreground">
+											10 points for Director/Dean/HOD positions, 5 for
+											committees (max 20 points)
+										</p>
 									</div>
-								))}
-								<Button
-									type="button"
-									variant="outline"
-									onClick={() =>
-										addRow(setMentorships, {
-											id: crypto.randomUUID(),
-											programName: "",
-											involvementType: "Mentor",
-											details: "",
-											apiScore: null,
-											hodRemarks: "Pending",
-										})
-									}
-									className="w-full"
-								>
-									<Plus className="h-4 w-4 mr-2" /> Add Mentorship
-								</Button>
+									<Button
+										type="button"
+										variant="outline"
+										size="sm"
+										onClick={addSectionC}
+									>
+										<Plus className="h-4 w-4 mr-1" />
+										Add Entry
+									</Button>
+								</div>
+
+								<div className="rounded-lg border overflow-x-auto">
+									<table className="w-full text-sm">
+										<thead className="bg-muted/50 text-muted-foreground">
+											<tr>
+												<th className="px-4 py-3 text-left w-[30%]">
+													Position Type
+												</th>
+												<th className="px-4 py-3 text-left w-[60%]">
+													Details of Activities
+												</th>
+												<th className="px-4 py-3 w-[10%]"></th>
+											</tr>
+										</thead>
+										<tbody>
+											{sectionC.map((e) => (
+												<tr key={e.id} className="border-t align-top">
+													<td className="p-3">
+														<Select
+															value={e.positionType}
+															onValueChange={(value) =>
+																updateSectionC(e.id, "positionType", value)
+															}
+														>
+															<SelectTrigger>
+																<SelectValue placeholder="Select position" />
+															</SelectTrigger>
+															<SelectContent>
+																<SelectItem value="Director">
+																	Director
+																</SelectItem>
+																<SelectItem value="Dean">Dean</SelectItem>
+																<SelectItem value="HOD">HOD</SelectItem>
+																<SelectItem value="Time Table Incharge">
+																	Time Table Incharge
+																</SelectItem>
+																<SelectItem value="Training & Placement Incharge">
+																	Training & Placement Incharge
+																</SelectItem>
+																<SelectItem value="Chairman - Institution Committee">
+																	Chairman - Institution Committee
+																</SelectItem>
+																<SelectItem value="Member - Institution Committee">
+																	Member - Institution Committee
+																</SelectItem>
+																<SelectItem value="Individual Responsibility">
+																	Individual Responsibility
+																</SelectItem>
+															</SelectContent>
+														</Select>
+													</td>
+													<td className="p-3">
+														<Textarea
+															value={e.detailsOfActivities}
+															onChange={(ev) =>
+																updateSectionC(
+																	e.id,
+																	"detailsOfActivities",
+																	ev.target.value
+																)
+															}
+															placeholder="Describe institute-level activities and responsibilities..."
+															rows={2}
+														/>
+													</td>
+													<td className="p-3 text-right">
+														<Button
+															type="button"
+															variant="ghost"
+															size="icon"
+															onClick={() => removeSectionC(e.id)}
+														>
+															<Trash2 className="h-4 w-4" />
+														</Button>
+													</td>
+												</tr>
+											))}
+										</tbody>
+									</table>
+								</div>
 							</div>
 						)}
 
-						{/* 13D */}
+						{/* Section D: Lectures Delivered */}
 						{activeTab === "D" && (
-							<div className="space-y-3">
-								{otherContributions.map((o) => (
-									<div key={o.id} className="rounded-lg border p-4">
-										<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-											<div>
-												<Label className="text-xs">Title</Label>
-												<Input
-													value={o.title}
-													onChange={(e) =>
-														updateRow(
-															setOtherContributions,
-															o.id,
-															"title",
-															e.target.value
-														)
-													}
-													placeholder="Activity Title"
-												/>
-											</div>
-											<div className="md:col-span-2">
-												<Label className="text-xs">Details</Label>
-												<Input
-													value={o.details}
-													onChange={(e) =>
-														updateRow(
-															setOtherContributions,
-															o.id,
-															"details",
-															e.target.value
-														)
-													}
-													placeholder="Description"
-												/>
-											</div>
-										</div>
-										<div className="mt-2 text-right">
-											<Button
-												variant="ghost"
-												size="icon"
-												onClick={() => removeRow(setOtherContributions, o.id)}
-											>
-												<Trash2 className="h-4 w-4" />
-											</Button>
-										</div>
+							<div className="space-y-4">
+								<div className="flex items-center justify-between">
+									<div>
+										<h3 className="text-lg font-semibold">
+											D. Special/Extension/Expert/Invited Lectures Delivered
+										</h3>
+										<p className="text-sm text-muted-foreground">
+											10 points for outside institute, 5 for within (max 20
+											points)
+										</p>
 									</div>
-								))}
-								<Button
-									type="button"
-									variant="outline"
-									onClick={() =>
-										addRow(setOtherContributions, {
-											id: crypto.randomUUID(),
-											title: "",
-											details: "",
-											apiScore: null,
-											hodRemarks: "Pending",
-										})
-									}
-									className="w-full"
-								>
-									<Plus className="h-4 w-4 mr-2" /> Add Contribution
-								</Button>
+									<Button
+										type="button"
+										variant="outline"
+										size="sm"
+										onClick={addSectionD}
+									>
+										<Plus className="h-4 w-4 mr-1" />
+										Add Entry
+									</Button>
+								</div>
+
+								<div className="rounded-lg border overflow-x-auto">
+									<table className="w-full text-sm">
+										<thead className="bg-muted/50 text-muted-foreground">
+											<tr>
+												<th className="px-4 py-3 text-left w-[30%]">Nature</th>
+												<th className="px-4 py-3 text-left w-[60%]">
+													Details of Activities
+												</th>
+												<th className="px-4 py-3 w-[10%]"></th>
+											</tr>
+										</thead>
+										<tbody>
+											{sectionD.map((e) => (
+												<tr key={e.id} className="border-t align-top">
+													<td className="p-3">
+														<Select
+															value={e.nature}
+															onValueChange={(value) =>
+																updateSectionD(e.id, "nature", value)
+															}
+														>
+															<SelectTrigger>
+																<SelectValue placeholder="Select nature" />
+															</SelectTrigger>
+															<SelectContent>
+																<SelectItem value="Outside Institute">
+																	Outside Institute
+																</SelectItem>
+																<SelectItem value="Within Institute">
+																	Within Institute
+																</SelectItem>
+															</SelectContent>
+														</Select>
+													</td>
+													<td className="p-3">
+														<Textarea
+															value={e.detailsOfActivities}
+															onChange={(ev) =>
+																updateSectionD(
+																	e.id,
+																	"detailsOfActivities",
+																	ev.target.value
+																)
+															}
+															placeholder="Describe lecture topic, venue, audience, date..."
+															rows={2}
+														/>
+													</td>
+													<td className="p-3 text-right">
+														<Button
+															type="button"
+															variant="ghost"
+															size="icon"
+															onClick={() => removeSectionD(e.id)}
+														>
+															<Trash2 className="h-4 w-4" />
+														</Button>
+													</td>
+												</tr>
+											))}
+										</tbody>
+									</table>
+								</div>
+							</div>
+						)}
+
+						{/* Section E: Articles/Reports */}
+						{activeTab === "E" && (
+							<div className="space-y-4">
+								<div className="flex items-center justify-between">
+									<div>
+										<h3 className="text-lg font-semibold">
+											E. Articles, Monographs, Technical Reports, Reviews
+											Written
+										</h3>
+										<p className="text-sm text-muted-foreground">
+											1/2/3 points each based on level, quality, effort (max 10
+											points)
+										</p>
+									</div>
+									<Button
+										type="button"
+										variant="outline"
+										size="sm"
+										onClick={addSectionE}
+									>
+										<Plus className="h-4 w-4 mr-1" />
+										Add Entry
+									</Button>
+								</div>
+
+								<div className="rounded-lg border overflow-x-auto">
+									<table className="w-full text-sm">
+										<thead className="bg-muted/50 text-muted-foreground">
+											<tr>
+												<th className="px-4 py-3 text-left w-[15%]">Points</th>
+												<th className="px-4 py-3 text-left w-[75%]">
+													Details of Activities
+												</th>
+												<th className="px-4 py-3 w-[10%]"></th>
+											</tr>
+										</thead>
+										<tbody>
+											{sectionE.map((e) => (
+												<tr key={e.id} className="border-t align-top">
+													<td className="p-3">
+														<Select
+															value={e.points.toString()}
+															onValueChange={(value) =>
+																updateSectionE(e.id, "points", Number(value))
+															}
+														>
+															<SelectTrigger>
+																<SelectValue placeholder="Points" />
+															</SelectTrigger>
+															<SelectContent>
+																<SelectItem value="1">1</SelectItem>
+																<SelectItem value="2">2</SelectItem>
+																<SelectItem value="3">3</SelectItem>
+															</SelectContent>
+														</Select>
+													</td>
+													<td className="p-3">
+														<Textarea
+															value={e.detailsOfActivities}
+															onChange={(ev) =>
+																updateSectionE(
+																	e.id,
+																	"detailsOfActivities",
+																	ev.target.value
+																)
+															}
+															placeholder="Describe article/monograph/report title, publication, impact..."
+															rows={2}
+														/>
+													</td>
+													<td className="p-3 text-right">
+														<Button
+															type="button"
+															variant="ghost"
+															size="icon"
+															onClick={() => removeSectionE(e.id)}
+														>
+															<Trash2 className="h-4 w-4" />
+														</Button>
+													</td>
+												</tr>
+											))}
+										</tbody>
+									</table>
+								</div>
 							</div>
 						)}
 

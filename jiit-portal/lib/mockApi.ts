@@ -23,7 +23,7 @@ import {
   StudentActivitiesSection,
 } from './types';
 
-export const calculateGeneralDetailsScore = (data: GeneralDetailsForm | GeneralDetailsSection): number => {
+export const calculateGeneralDetailsScore = (): number => {
   // Simple mock: 10 points for completing general details
   return 10;
 };
@@ -54,7 +54,7 @@ export const calculateResearchPapersScore = (entries: ResearchPaperEntry[]): num
   };
   
   return entries.reduce((total, entry) => {
-    return total + (scores[entry.publicationType] || 10);
+    return total + (scores[entry.pubType] || 10);
   }, 0);
 };
 
@@ -85,60 +85,6 @@ export const calculateExamDutiesScore = (entries: ExamDutyEntry[]): number => {
   );
 };
 
-export const calculateBooksChaptersScore = (entries: BookChapterEntry[]): number => {
-  // Mock: Book = 20 points, Chapter = 10
-  return entries.reduce((total, e) => total + (e.publicationType === 'B' ? 20 : 10), 0);
-};
-
-export const calculateResearchProjectsScore = (entries: ResearchProjectEntry[]): number => {
-  // Mock scoring:
-  // - Chief Investigator: 10 points (Completed) / 8 (Ongoing)
-  // - Co-Investigator: 6 points (Completed) / 4 (Ongoing)
-  // - Bonus: +1 per $10,000 sanctioned (capped at +10 per entry)
-  return entries.reduce((total, e) => {
-    const base =
-      e.role === 'Chief Investigator'
-        ? e.status === 'Completed'
-          ? 10
-          : 8
-        : e.status === 'Completed'
-        ? 6
-        : 4;
-    const bonus = Math.min(10, Math.floor((Number(e.amountSanctioned) || 0) / 10000));
-    return total + base + bonus;
-  }, 0);
-};
-
-export const calculateResearchGuidanceScore = (entries: ResearchGuidanceEntry[]): number => {
-  // Mock scoring based solely on level (to mirror UI examples):
-  // PhD 10, DD 8, MTech 5, MPhil 6, MS 6
-  const levelBase: Record<string, number> = {
-    PhD: 10,
-    BTech: 8,
-    MTech: 6,
-  };
-  return entries.reduce((total, e) => total + (levelBase[e.level] ?? 5), 0);
-};
-
-export const calculateMembershipsScore = (entries: MembershipEntry[]): number => {
-  // Mock: each professional membership gives 5 points, capped at 25
-  const per = 5;
-  return Math.min(25, (entries?.length || 0) * per);
-};
-
-export const calculateStudentActivitiesScore = (data: StudentActivitiesSection): number => {
-  // Mock scoring heuristic inspired by proposal:
-  // - Tech communities: 5 points per entry
-  // - Student events: 10 per event + 1 per expert (capped 5/event)
-  // - Mentorships: 5 per entry
-  // - Other contributions: 3 per entry
-  const tc = (data.techCommunities?.length || 0) * 5;
-  const events = (data.studentEvents || []).reduce((sum, ev) => sum + 10 + Math.min(5, ev.expertsInvited?.length || 0), 0);
-  const ms = (data.mentorships?.length || 0) * 5;
-  const oc = (data.otherContributions?.length || 0) * 3;
-  // Cap total to 20 to keep balance with other sections
-  return Math.min(20, tc + events + ms + oc);
-};
 
 type SectionId =
   | 'general-details'
@@ -180,7 +126,7 @@ export const simulateApiCall = <T extends SectionId>(
       
       switch (sectionId) {
         case 'general-details':
-          score = calculateGeneralDetailsScore(data as SectionPayloadMap['general-details']);
+          score = calculateGeneralDetailsScore();
           break;
         case 'conference-events':
           score = calculateConferenceScore((data as ConferenceSection | { entries: ConferenceEntry[] }).entries || []);
@@ -202,21 +148,6 @@ export const simulateApiCall = <T extends SectionId>(
           break;
         case 'exam-duties':
           score = calculateExamDutiesScore((data as ExamDutiesSection | { entries: ExamDutyEntry[] }).entries || []);
-          break;
-        case 'books-chapters':
-          score = calculateBooksChaptersScore((data as BooksChaptersSection | { entries: BookChapterEntry[] }).entries || []);
-          break;
-        case 'research-projects':
-          score = calculateResearchProjectsScore((data as ResearchProjectsSection | { entries: ResearchProjectEntry[] }).entries || []);
-          break;
-        case 'research-guidance':
-          score = calculateResearchGuidanceScore((data as ResearchGuidanceSection | { entries: ResearchGuidanceEntry[] }).entries || []);
-          break;
-        case 'memberships':
-          score = calculateMembershipsScore((data as MembershipsSection | { entries: MembershipEntry[] }).entries || []);
-          break;
-        case 'student-activities':
-          score = calculateStudentActivitiesScore(data as StudentActivitiesSection);
           break;
         default:
           score = 5; // Default score for other sections

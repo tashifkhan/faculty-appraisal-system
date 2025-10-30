@@ -3,16 +3,8 @@
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import AppraisalLayout from "@/components/AppraisalLayout";
-import {
-	Card,
-	CardContent,
-	CardDescription,
-	CardHeader,
-	CardTitle,
-} from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import {
 	Select,
 	SelectContent,
@@ -20,35 +12,37 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from "@/components/ui/select";
+import {
+	Card,
+	CardContent,
+	CardDescription,
+	CardHeader,
+	CardTitle,
+} from "@/components/ui/card";
 import { APPRAISAL_SECTIONS } from "@/lib/constants";
-import { BookChapterEntry, BooksChaptersSection } from "@/lib/types";
+import { MembershipEntry, MembershipsSection } from "@/lib/types";
 import { getSectionData, updateSectionData } from "@/lib/localStorage";
 import { simulateApiCall } from "@/lib/mockApi";
 import { ArrowLeft, ArrowRight, Plus, Save, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 
-export default function BooksChaptersPage() {
+export default function MembershipsPage() {
 	const router = useRouter();
 	const [isSubmitting, setIsSubmitting] = useState(false);
 	const [apiScore, setApiScore] = useState<number | null>(null);
-	const [entries, setEntries] = useState<BookChapterEntry[]>([
-		{
-			id: crypto.randomUUID(),
-			authors: "",
-			titleAndReference: "",
-			publicationType: "B",
-		},
+	const [entries, setEntries] = useState<MembershipEntry[]>([
+		{ id: crypto.randomUUID(), positionType: "", membershipDetails: "" },
 	]);
 
 	const currentIndex = APPRAISAL_SECTIONS.findIndex(
-		(s) => s.id === "books-chapters"
+		(s) => s.id === "18-memberships"
 	);
 	const prevSection = APPRAISAL_SECTIONS[currentIndex - 1];
 	const nextSection = APPRAISAL_SECTIONS[currentIndex + 1];
 
 	useEffect(() => {
-		const existing = getSectionData("booksChapters") as
-			| BooksChaptersSection
+		const existing = getSectionData("memberships") as
+			| MembershipsSection
 			| undefined;
 		if (existing) {
 			setApiScore(existing.apiScore ?? null);
@@ -63,35 +57,25 @@ export default function BooksChaptersPage() {
 		}
 	}, []);
 
-	const addEntry = () => {
+	const addEntry = () =>
 		setEntries((list) => [
 			...list,
-			{
-				id: crypto.randomUUID(),
-				authors: "",
-				titleAndReference: "",
-				publicationType: "B",
-			},
+			{ id: crypto.randomUUID(), positionType: "", membershipDetails: "" },
 		]);
-	};
-
-	const removeEntry = (id: string) => {
+	const removeEntry = (id: string) =>
 		setEntries((list) =>
 			list.length > 1 ? list.filter((e) => e.id !== id) : list
 		);
-	};
-
-	const updateEntry = <K extends keyof BookChapterEntry>(
+	const updateEntry = <K extends keyof MembershipEntry>(
 		id: string,
 		key: K,
-		value: BookChapterEntry[K]
-	) => {
+		value: MembershipEntry[K]
+	) =>
 		setEntries((list) =>
 			list.map((e) => (e.id === id ? { ...e, [key]: value } : e))
 		);
-	};
 
-	const payload: BooksChaptersSection = useMemo(
+	const payload: MembershipsSection = useMemo(
 		() => ({ entries, apiScore: null }),
 		[entries]
 	);
@@ -100,8 +84,8 @@ export default function BooksChaptersPage() {
 		e.preventDefault();
 		setIsSubmitting(true);
 		try {
-			const result = await simulateApiCall("books-chapters", payload);
-			updateSectionData("booksChapters", payload, result.score);
+			const result = await simulateApiCall("memberships", payload);
+			updateSectionData("memberships", payload, result.score);
 			setApiScore(result.score);
 			toast.success(result.message);
 		} catch {
@@ -116,11 +100,10 @@ export default function BooksChaptersPage() {
 			<Card>
 				<CardHeader>
 					<CardTitle className="text-2xl">
-						9. Books, Chapters in Books Written
+						12. Membership of Professional Bodies
 					</CardTitle>
 					<CardDescription>
-						Add or edit your publications. Ensure all details are accurate as
-						per IEEE style.
+						List professional memberships and associations.
 					</CardDescription>
 				</CardHeader>
 				<CardContent>
@@ -132,79 +115,76 @@ export default function BooksChaptersPage() {
 						</div>
 					)}
 
-					<form onSubmit={onSubmit} className="space-y-4">
+					<form onSubmit={onSubmit} className="space-y-6">
 						<div className="rounded-lg border overflow-x-auto">
 							<table className="w-full text-sm">
 								<thead className="bg-muted/50 text-muted-foreground">
 									<tr>
-										<th className="px-4 py-3 text-left w-1/4">
-											Names of All Authors in Order
+										<th className="px-4 py-3 text-left w-[30%]">
+											Position Type
 										</th>
-										<th className="px-4 py-3 text-left w-2/5">
-											Title and Complete Reference in IEEE Style
+										<th className="px-4 py-3 text-left w-[60%]">
+											Membership Details
 										</th>
-										<th className="px-4 py-3 text-left w-1/6">
-											Type of Publication
-										</th>
-										<th className="px-4 py-3"></th>
+										<th className="px-4 py-3 w-[10%]"></th>
 									</tr>
 								</thead>
 								<tbody>
-									{entries.map((e) => {
-										return (
-											<tr key={e.id} className="border-t align-top">
-												<td className="p-3">
-													<Input
-														value={e.authors}
-														onChange={(ev) =>
-															updateEntry(e.id, "authors", ev.target.value)
-														}
-														placeholder="e.g., Dr. Jane Doe, Dr. John Smith"
-													/>
-												</td>
-												<td className="p-3">
-													<Textarea
-														rows={3}
-														value={e.titleAndReference}
-														onChange={(ev) =>
-															updateEntry(
-																e.id,
-																"titleAndReference",
-																ev.target.value
-															)
-														}
-														placeholder="e.g., The Future of AI, IEEE Press, 2024."
-													/>
-												</td>
-												<td className="p-3">
-													<Select
-														value={e.publicationType}
-														onValueChange={(v: "B" | "C") =>
-															updateEntry(e.id, "publicationType", v)
-														}
-													>
-														<SelectTrigger>
-															<SelectValue />
-														</SelectTrigger>
-														<SelectContent>
-															<SelectItem value="B">B-Book</SelectItem>
-															<SelectItem value="C">C-Chapter</SelectItem>
-														</SelectContent>
-													</Select>
-												</td>
-												<td className="p-3 text-right">
-													<Button
-														type="button"
-														variant="ghost"
-														size="icon"
-														onClick={() => removeEntry(e.id)}
-													>
-														<Trash2 className="h-4 w-4" />
-													</Button>
-												</td>
-											</tr>
-										);
-									})}
+									{entries.map((e) => (
+										<tr key={e.id} className="border-t align-top">
+											<td className="p-3">
+												<Select
+													value={e.positionType}
+													onValueChange={(value) =>
+														updateEntry(e.id, "positionType", value)
+													}
+												>
+													<SelectTrigger>
+														<SelectValue placeholder="Select type" />
+													</SelectTrigger>
+													<SelectContent>
+														<SelectItem value="Member">Member</SelectItem>
+														<SelectItem value="Senior Member">
+															Senior Member
+														</SelectItem>
+														<SelectItem value="Fellow">Fellow</SelectItem>
+														<SelectItem value="Life Member">
+															Life Member
+														</SelectItem>
+														<SelectItem value="Associate Member">
+															Associate Member
+														</SelectItem>
+														<SelectItem value="Honorary Member">
+															Honorary Member
+														</SelectItem>
+													</SelectContent>
+												</Select>
+											</td>
+											<td className="p-3">
+												<Input
+													value={e.membershipDetails}
+													onChange={(ev) =>
+														updateEntry(
+															e.id,
+															"membershipDetails",
+															ev.target.value
+														)
+													}
+													placeholder="e.g., IEEE - Institute of Electrical and Electronics Engineers"
+												/>
+											</td>
+											<td className="p-3 text-right">
+												<Button
+													type="button"
+													variant="ghost"
+													size="icon"
+													onClick={() => removeEntry(e.id)}
+												>
+													<Trash2 className="h-4 w-4" />
+												</Button>
+											</td>
+										</tr>
+									))}
 								</tbody>
 							</table>
 						</div>
