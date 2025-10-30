@@ -98,11 +98,20 @@ export interface ExamDutiesSection extends ScoredItem {
 // 9. Books & Chapters in Books Written
 export type BookChapterType = 'B' | 'C'; // B-Book, C-Chapter
 
+export interface BookChapterAuthor {
+  id: string;
+  name: string;
+  authorType: string;
+}
+
 export interface BookChapterEntry {
   id: string;
-  authors: string;
-  titleAndReference: string;
-  publicationType: BookChapterType; // 'B' for Book, 'C' for Chapter
+  titleAndCompleteReference: string;
+  publisherType: string;
+  isChapter: boolean;
+  numberOfChapters: number;
+  userAuthorType: string;
+  otherAuthors: BookChapterAuthor[];
 }
 
 export interface BooksChaptersSection extends ScoredItem {

@@ -7,7 +7,7 @@ export const APPRAISAL_SECTIONS = [
   // { id: '12-4-exam-duties', title: '6. Examination Duties', route: '/appraisal/exam-duties' },
   { id: '13-student-activities', title: '7. Student Activities', route: '/appraisal/13-student-activities' },
   { id: '14-research-papers', title: '8. Research Papers', route: '/appraisal/14-research-papers' },
-  { id: 'books-chapters', title: '9. Books & Chapters', route: '/appraisal/books-chapters' },
+  { id: '15-books-chapters', title: '9. Books & Chapters', route: '/appraisal/15-books-chapters' },
   { id: 'research-projects', title: '10. Research Projects', route: '/appraisal/research-projects' },
   { id: 'research-guidance', title: '11. Research Guidance', route: '/appraisal/research-guidance' },
   { id: 'memberships', title: '12. Memberships', route: '/appraisal/memberships' },
