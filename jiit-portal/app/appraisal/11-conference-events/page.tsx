@@ -39,11 +39,12 @@ export default function ConferenceEvents() {
 			sponsoringAgency: "",
 			organisationPlace: "",
 			attendedOrganized: "attended",
+			programType: "conference",
 		},
 	]);
 
 	const currentIndex = APPRAISAL_SECTIONS.findIndex(
-		(s) => s.id === "conference-events"
+		(s) => s.id === "11-conference-events"
 	);
 	const prevSection = APPRAISAL_SECTIONS[currentIndex - 1];
 	const nextSection = APPRAISAL_SECTIONS[currentIndex + 1];
@@ -59,6 +60,8 @@ export default function ConferenceEvents() {
 					sponsoringAgency: e.sponsoringAgency,
 					organisationPlace: e.organisationPlace,
 					attendedOrganized: e.attendedOrganized,
+					programType: e.programType || "conference",
+					isChiefOrganiser: e.isChiefOrganiser,
 				}))
 			);
 			setApiScore(existingData.apiScore ?? null);
@@ -75,6 +78,7 @@ export default function ConferenceEvents() {
 				sponsoringAgency: "",
 				organisationPlace: "",
 				attendedOrganized: "attended",
+				programType: "conference",
 			},
 		]);
 	};
@@ -87,7 +91,7 @@ export default function ConferenceEvents() {
 
 	const updateEntry = (
 		id: string,
-		field: keyof ConferenceEntry,
+		field: keyof ConferenceEntry | string,
 		value: string
 	) => {
 		setEntries(
@@ -160,18 +164,78 @@ export default function ConferenceEvents() {
 										/>
 									</div>
 
+									<div className="space-y-2">
+										<Label>Program Type</Label>
+										<Select
+											value={entry.programType || "conference"}
+											onValueChange={(
+												value:
+													| "course"
+													| "program"
+													| "seminar"
+													| "conference"
+													| "workshop"
+											) => updateEntry(entry.id, "programType", value)}
+										>
+											<SelectTrigger>
+												<SelectValue />
+											</SelectTrigger>
+											<SelectContent>
+												<SelectItem value="course">Course</SelectItem>
+												<SelectItem value="program">Program</SelectItem>
+												<SelectItem value="seminar">Seminar</SelectItem>
+												<SelectItem value="conference">Conference</SelectItem>
+												<SelectItem value="workshop">Workshop</SelectItem>
+											</SelectContent>
+										</Select>
+									</div>
+
 									<div className="grid gap-4 md:grid-cols-2">
-										<div className="space-y-2">
-											<Label>Dates/Duration</Label>
-											<Input
-												value={entry.datesDuration}
-												onChange={(e) =>
-													updateEntry(entry.id, "datesDuration", e.target.value)
-												}
-												placeholder="e.g., 15-17 Jan 2024"
-												required
-											/>
-										</div>
+										{(() => {
+											const parts = entry.datesDuration
+												? entry.datesDuration.split(" | ")
+												: ["", ""];
+											const start = parts[0] ?? "";
+											const end = parts[1] ?? "";
+											return (
+												<>
+													<div className="space-y-2">
+														<Label>Start Date</Label>
+														<Input
+															type="date"
+															value={start}
+															onChange={(e) => {
+																const newStart = e.target.value;
+																updateEntry(
+																	entry.id,
+																	"datesDuration",
+																	`${newStart} | ${end}`
+																);
+															}}
+															required
+														/>
+													</div>
+
+													<div className="space-y-2">
+														<Label>End Date</Label>
+														<Input
+															type="date"
+															value={end}
+															min={start || undefined}
+															onChange={(e) => {
+																const newEnd = e.target.value;
+																updateEntry(
+																	entry.id,
+																	"datesDuration",
+																	`${start} | ${newEnd}`
+																);
+															}}
+															required
+														/>
+													</div>
+												</>
+											);
+										})()}
 
 										<div className="space-y-2">
 											<Label>Attended/Organized</Label>
@@ -189,6 +253,47 @@ export default function ConferenceEvents() {
 													<SelectItem value="organized">Organized</SelectItem>
 												</SelectContent>
 											</Select>
+
+											{entry.attendedOrganized === "organized" && (
+												<div className="pt-2">
+													<Label>Are you the Chief Organizer?</Label>
+													<div className="flex items-center space-x-4 mt-2">
+														<label className="inline-flex items-center space-x-2">
+															<input
+																type="radio"
+																name={`chief-${entry.id}`}
+																value="yes"
+																checked={entry.isChiefOrganiser === "yes"}
+																onChange={(e) =>
+																	updateEntry(
+																		entry.id,
+																		"isChiefOrganiser",
+																		e.target.value
+																	)
+																}
+															/>
+															<span>Yes</span>
+														</label>
+
+														<label className="inline-flex items-center space-x-2">
+															<input
+																type="radio"
+																name={`chief-${entry.id}`}
+																value="no"
+																checked={entry.isChiefOrganiser !== "yes"}
+																onChange={(e) =>
+																	updateEntry(
+																		entry.id,
+																		"isChiefOrganiser",
+																		e.target.value
+																	)
+																}
+															/>
+															<span>No</span>
+														</label>
+													</div>
+												</div>
+											)}
 										</div>
 									</div>
 

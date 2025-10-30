@@ -1,6 +1,6 @@
 export const APPRAISAL_SECTIONS = [
   { id: 'general-details', title: '1. General Details', route: '/appraisal/general-details' },
-  { id: 'conference-events', title: '2. Conference and All', route: '/appraisal/conference-events' },
+  { id: '11-conference-events', title: '2. Conference and All', route: '/appraisal/11-conference-events' },
   { id: 'lectures-tutorials', title: '3. Lectures/Tutorials/Practicals', route: '/appraisal/lectures-tutorials' },
   { id: 'reading-material', title: '4. Reading Material', route: '/appraisal/reading-material' },
   { id: 'project-guidance', title: '5. Project Guidance', route: '/appraisal/project-guidance' },

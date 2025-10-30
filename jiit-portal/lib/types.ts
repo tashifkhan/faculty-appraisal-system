@@ -28,6 +28,8 @@ export interface ConferenceEntry {
   sponsoringAgency: string;
   organisationPlace: string;
   attendedOrganized: 'attended' | 'organized';
+  isChiefOrganiser?: 'yes' | 'no';
+  programType: 'course' | 'program' | 'seminar' | 'conference' | 'workshop';
 }
 
 export interface ConferenceSection {
