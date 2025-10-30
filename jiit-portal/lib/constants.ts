@@ -6,7 +6,7 @@ export const APPRAISAL_SECTIONS = [
   { id: '12-3-4-project-guidance-and-exam-duties', title: '5. Project Guidance', route: '/appraisal/12-3-4-project-guidance-and-exam-duties' },
   // { id: '12-4-exam-duties', title: '6. Examination Duties', route: '/appraisal/exam-duties' },
   { id: '13-student-activities', title: '7. Student Activities', route: '/appraisal/13-student-activities' },
-  { id: 'research-papers', title: '8. Research Papers', route: '/appraisal/research-papers' },
+  { id: '14-research-papers', title: '8. Research Papers', route: '/appraisal/14-research-papers' },
   { id: 'books-chapters', title: '9. Books & Chapters', route: '/appraisal/books-chapters' },
   { id: 'research-projects', title: '10. Research Projects', route: '/appraisal/research-projects' },
   { id: 'research-guidance', title: '11. Research Guidance', route: '/appraisal/research-guidance' },
@@ -19,4 +19,5 @@ export const PUBLICATION_TYPES = [
   { value: 'IC', label: 'International Conference' },
   { value: 'PN', label: 'Patent' },
   { value: 'OA', label: 'Open Access' },
+  { value: 'OJ', label: 'Other Journal' },
 ] as const;

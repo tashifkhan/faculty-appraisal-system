@@ -110,11 +110,30 @@ export interface BooksChaptersSection extends ScoredItem {
 }
 
 // 8. Research Papers
+export enum PublicationType {
+  IJ = "IJ",
+  NJ = "NJ",
+  IC = "IC",
+  PN = "PN",
+  OA = "OA",
+  OJ = "OJ"
+}
+
+export interface OtherAuthor {
+  id: string;
+  name: string;
+  authorType: string;
+}
+
 export interface ResearchPaperEntry {
   id: string;
-  authors: string;
-  titleAndReference: string;
-  publicationType: 'IJ' | 'NJ' | 'IC' | 'PN' | 'OA';
+  titleAndCompleteReference: string;
+  pubType: PublicationType;
+  isbnIssn: string;
+  indexed: boolean;
+  impactFactor: number;
+  userAuthorType: string;
+  otherAuthors: OtherAuthor[];
 }
 
 export interface ResearchPapersSection {
