@@ -56,7 +56,7 @@ export default function LecturesTutorialsPage() {
 	]);
 
 	const currentIndex = APPRAISAL_SECTIONS.findIndex(
-		(s) => s.id === "lectures-tutorials"
+		(s) => s.id === "12-1-lectures-tutorials"
 	);
 	const prevSection = APPRAISAL_SECTIONS[currentIndex - 1];
 	const nextSection = APPRAISAL_SECTIONS[currentIndex + 1];

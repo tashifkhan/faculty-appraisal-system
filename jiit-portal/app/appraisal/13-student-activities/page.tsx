@@ -14,6 +14,13 @@ import {
 	CardTitle,
 } from "@/components/ui/card";
 import {
+	Select,
+	SelectContent,
+	SelectItem,
+	SelectTrigger,
+	SelectValue,
+} from "@/components/ui/select";
+import {
 	IndustryExpert,
 	MentorshipActivity,
 	OtherContribution,
@@ -107,7 +114,7 @@ export default function StudentActivitiesPage() {
 	]);
 
 	const currentIndex = APPRAISAL_SECTIONS.findIndex(
-		(s) => s.id === "student-activities"
+		(s) => s.id === "13-student-activities"
 	);
 	const prevSection = APPRAISAL_SECTIONS[currentIndex - 1];
 	const nextSection = APPRAISAL_SECTIONS[currentIndex + 1];
@@ -566,8 +573,8 @@ export default function StudentActivitiesPage() {
 						<div className="flex gap-6">
 							{(
 								[
-									["A", "Tech Communities / Hubs"],
-									["B", "Organized Events / Hackathons"],
+									["A", "Societies / Hubs"],
+									["B", "Organized Events "],
 									["C", "Mentorship & Internal Competitions"],
 									["D", "Other Contributions"],
 								] as const
@@ -614,18 +621,20 @@ export default function StudentActivitiesPage() {
 											</div>
 											<div>
 												<Label className="text-xs">Role / Position</Label>
-												<Input
+												<Select
 													value={r.role}
-													onChange={(e) =>
-														updateRow(
-															setTechCommunities,
-															r.id,
-															"role",
-															e.target.value
-														)
+													onValueChange={(value) =>
+														updateRow(setTechCommunities, r.id, "role", value)
 													}
-													placeholder="Faculty Coordinator"
-												/>
+												>
+													<SelectTrigger>
+														<SelectValue placeholder="Select role" />
+													</SelectTrigger>
+													<SelectContent>
+														<SelectItem value="lead role">Lead Role</SelectItem>
+														<SelectItem value="member">Member</SelectItem>
+													</SelectContent>
+												</Select>
 											</div>
 											<div className="md:col-span-2">
 												<Label className="text-xs">Details of Activities</Label>

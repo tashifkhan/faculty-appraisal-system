@@ -38,7 +38,7 @@ export default function ReadingMaterialPage() {
 	]);
 
 	const currentIndex = APPRAISAL_SECTIONS.findIndex(
-		(s) => s.id === "reading-material"
+		(s) => s.id === "12-2-reading-material"
 	);
 	const prevSection = APPRAISAL_SECTIONS[currentIndex - 1];
 	const nextSection = APPRAISAL_SECTIONS[currentIndex + 1];
