@@ -78,12 +78,14 @@ export interface ProjectGuidanceSection extends ScoredItem {
 export type ExamDutyActivity =
   | 'qp_set' // No. of Q. Papers Set
   | 'ab_evaluated' // No. of A/B Evaluated
-  | 'practical_conducted'; // No. of Practical Exams Conducted
+  | 'practical_conducted' // No. of Practical Exams Conducted
+  | 'invigilation_duties'; // No. of Examination Invigilation Duties
 
 export interface ExamDutyEntry {
   id: string;
   activity: ExamDutyActivity;
-  classLevel: 'UG' | 'PG';
+  classLevel?: 'UG' | 'PG'; // Optional for invigilation_duties
+  invigilationType?: 'allotted' | 'performed'; // Only for invigilation_duties
   t1: number;
   t2: number;
   t3: number;
