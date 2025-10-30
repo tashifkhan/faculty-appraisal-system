@@ -255,58 +255,49 @@ export interface OtherInfoSection extends ScoredItem {
 }
 
 // 7. Student Activities (Contribution/Participation in Students Extra & Co‑Curricular activities)
-export interface IndustryExpert {
+
+// SECTION 13A — Societies/Hubs (incorporate event details)
+export interface SocietyActivity {
   id: string;
-  name: string;
-  profile: string;
-  company: string;
-  emailId: string;
-  cellNumber: string;
-  startDate: string; // ISO date
-  endDate: string; // ISO date
-  durationHours: number;
+  nameOfClub: string;
+  playedLeadRole: boolean;
+  detailsOfActivities: string;
 }
 
-// SECTION 13A — Student Technical Communities / Clubs
-export interface TechCommunityActivity {
+// SECTION 13B — Departmental Activities & Development
+export interface DepartmentalActivity {
   id: string;
-  communityName: string; // e.g., "Google Developer Group (GDG) Hub"
-  role: string; // e.g., "Faculty Coordinator"
-  contributionDetails: string; // Description of responsibilities
+  role: string;
+  detailsOfActivities: string;
 }
 
-// SECTION 13B — Organized Competitions / Hackathons
-export interface StudentEvent {
+// SECTION 13C — Institute Activities & Development
+export interface InstituteActivity {
   id: string;
-  eventName: string; // e.g., "Bit‑Box 2.0"
-  eventType: string; // e.g., "Hackathon" | "Competition"
-  eventDates: string; // e.g., "4–6 March 2022"
-  theme: string; // e.g., "Google Solution Challenge"
-  facultyRole: string; // e.g., "Event Chair", "Organizer"
-  description: string;
-  expertsInvited: IndustryExpert[]; // nested table
+  positionType: string;
+  detailsOfActivities: string;
 }
 
-// SECTION 13C — Mentorship and Internal Competitions
-export interface MentorshipActivity {
+// SECTION 13D — Special/Extension/Expert/Invited Lectures Delivered
+export interface LectureActivity {
   id: string;
-  programName: string; // e.g., "Smart India Hackathon"
-  involvementType: string; // e.g., "Mentor" | "Coordinator"
-  details: string; // description
+  nature: string;
+  detailsOfActivities: string;
 }
 
-// SECTION 13D — Other Co‑Curricular Contributions
-export interface OtherContribution {
+// SECTION 13E — Articles, Monographs, Technical Reports, Reviews Written
+export interface ArticleActivity {
   id: string;
-  title: string;
-  details: string;
+  points: number;
+  detailsOfActivities: string;
 }
 
 export interface StudentActivitiesForm {
-  techCommunities: (TechCommunityActivity & ScoredItem)[];
-  studentEvents: (StudentEvent & ScoredItem)[];
-  mentorships: (MentorshipActivity & ScoredItem)[];
-  otherContributions: (OtherContribution & ScoredItem)[];
+  A: SocietyActivity[];
+  B: DepartmentalActivity[];
+  C: InstituteActivity[];
+  D: LectureActivity[];
+  E: ArticleActivity[];
 }
 
 export interface StudentActivitiesSection extends StudentActivitiesForm, ScoredItem {}
