@@ -20,6 +20,12 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from "@/components/ui/select";
+import { Calendar } from "@/components/ui/calendar";
+import {
+	Popover,
+	PopoverContent,
+	PopoverTrigger,
+} from "@/components/ui/popover";
 import { APPRAISAL_SECTIONS } from "@/lib/constants";
 import {
 	ResearchProjectEntry,
@@ -28,8 +34,17 @@ import {
 } from "@/lib/types";
 import { getSectionData, updateSectionData } from "@/lib/localStorage";
 import { simulateApiCall } from "@/lib/mockApi";
-import { ArrowLeft, ArrowRight, Plus, Save, Trash2 } from "lucide-react";
+import {
+	ArrowLeft,
+	ArrowRight,
+	Plus,
+	Save,
+	Trash2,
+	CalendarIcon,
+} from "lucide-react";
 import { toast } from "sonner";
+import { cn } from "@/lib/utils";
+import { format } from "date-fns";
 
 export default function ResearchProjectsPage() {
 	const router = useRouter();
@@ -265,13 +280,44 @@ export default function ResearchProjectsPage() {
 
 										<div className="space-y-2">
 											<Label>Sanction Date</Label>
-											<Input
-												type="date"
-												value={entry.sanctionDate}
-												onChange={(e) =>
-													updateEntry(entry.id, "sanctionDate", e.target.value)
-												}
-											/>
+											<Popover>
+												<PopoverTrigger asChild>
+													<Button
+														variant="outline"
+														className={cn(
+															"w-full justify-start text-left font-normal",
+															!entry.sanctionDate && "text-muted-foreground"
+														)}
+													>
+														<CalendarIcon className="mr-2 h-4 w-4" />
+														{entry.sanctionDate ? (
+															format(new Date(entry.sanctionDate), "PPP")
+														) : (
+															<span>Pick a date</span>
+														)}
+													</Button>
+												</PopoverTrigger>
+												<PopoverContent className="w-auto p-0" align="start">
+													<Calendar
+														mode="single"
+														selected={
+															entry.sanctionDate
+																? new Date(entry.sanctionDate)
+																: undefined
+														}
+														onSelect={(date) => {
+															if (date) {
+																updateEntry(
+																	entry.id,
+																	"sanctionDate",
+																	format(date, "yyyy-MM-dd")
+																);
+															}
+														}}
+														initialFocus
+													/>
+												</PopoverContent>
+											</Popover>
 										</div>
 
 										<div className="space-y-2">

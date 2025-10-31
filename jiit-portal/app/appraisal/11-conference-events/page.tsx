@@ -19,13 +19,28 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from "@/components/ui/select";
+import { Calendar } from "@/components/ui/calendar";
+import {
+	Popover,
+	PopoverContent,
+	PopoverTrigger,
+} from "@/components/ui/popover";
 import { ConferenceEntry, ConferenceSection } from "@/lib/types";
 import { getSectionData, updateSectionData } from "@/lib/localStorage";
 import { simulateApiCall } from "@/lib/mockApi";
 import { APPRAISAL_SECTIONS } from "@/lib/constants";
 import { toast } from "sonner";
-import { ArrowLeft, ArrowRight, Plus, Save, Trash2 } from "lucide-react";
+import {
+	ArrowLeft,
+	ArrowRight,
+	Plus,
+	Save,
+	Trash2,
+	CalendarIcon,
+} from "lucide-react";
 import AppraisalLayout from "@/components/AppraisalLayout";
+import { cn } from "@/lib/utils";
+import { format } from "date-fns";
 
 export default function ConferenceEvents() {
 	const router = useRouter();
@@ -197,41 +212,96 @@ export default function ConferenceEvents() {
 												: ["", ""];
 											const start = parts[0] ?? "";
 											const end = parts[1] ?? "";
+											const startDate = start ? new Date(start) : undefined;
+											const endDate = end ? new Date(end) : undefined;
+
 											return (
 												<>
 													<div className="space-y-2">
 														<Label>Start Date</Label>
-														<Input
-															type="date"
-															value={start}
-															onChange={(e) => {
-																const newStart = e.target.value;
-																updateEntry(
-																	entry.id,
-																	"datesDuration",
-																	`${newStart} | ${end}`
-																);
-															}}
-															required
-														/>
+														<Popover>
+															<PopoverTrigger asChild>
+																<Button
+																	variant="outline"
+																	className={cn(
+																		"w-full justify-start text-left font-normal",
+																		!startDate && "text-muted-foreground"
+																	)}
+																>
+																	<CalendarIcon className="mr-2 h-4 w-4" />
+																	{startDate ? (
+																		format(startDate, "PPP")
+																	) : (
+																		<span>Pick a date</span>
+																	)}
+																</Button>
+															</PopoverTrigger>
+															<PopoverContent
+																className="w-auto p-0"
+																align="start"
+															>
+																<Calendar
+																	mode="single"
+																	selected={startDate}
+																	onSelect={(date) => {
+																		const newStart = date
+																			? format(date, "yyyy-MM-dd")
+																			: "";
+																		updateEntry(
+																			entry.id,
+																			"datesDuration",
+																			`${newStart} | ${end}`
+																		);
+																	}}
+																	initialFocus
+																/>
+															</PopoverContent>
+														</Popover>
 													</div>
 
 													<div className="space-y-2">
 														<Label>End Date</Label>
-														<Input
-															type="date"
-															value={end}
-															min={start || undefined}
-															onChange={(e) => {
-																const newEnd = e.target.value;
-																updateEntry(
-																	entry.id,
-																	"datesDuration",
-																	`${start} | ${newEnd}`
-																);
-															}}
-															required
-														/>
+														<Popover>
+															<PopoverTrigger asChild>
+																<Button
+																	variant="outline"
+																	className={cn(
+																		"w-full justify-start text-left font-normal",
+																		!endDate && "text-muted-foreground"
+																	)}
+																>
+																	<CalendarIcon className="mr-2 h-4 w-4" />
+																	{endDate ? (
+																		format(endDate, "PPP")
+																	) : (
+																		<span>Pick a date</span>
+																	)}
+																</Button>
+															</PopoverTrigger>
+															<PopoverContent
+																className="w-auto p-0"
+																align="start"
+															>
+																<Calendar
+																	mode="single"
+																	selected={endDate}
+																	onSelect={(date) => {
+																		const newEnd = date
+																			? format(date, "yyyy-MM-dd")
+																			: "";
+																		updateEntry(
+																			entry.id,
+																			"datesDuration",
+																			`${start} | ${newEnd}`
+																		);
+																	}}
+																	disabled={(date) =>
+																		startDate ? date < startDate : false
+																	}
+																	initialFocus
+																/>
+															</PopoverContent>
+														</Popover>
 													</div>
 												</>
 											);

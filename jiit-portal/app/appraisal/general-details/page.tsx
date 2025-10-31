@@ -14,38 +14,48 @@ import {
 	CardHeader,
 	CardTitle,
 } from "@/components/ui/card";
+import { Calendar } from "@/components/ui/calendar";
+import {
+	Popover,
+	PopoverContent,
+	PopoverTrigger,
+} from "@/components/ui/popover";
 import { GeneralDetailsForm, GeneralDetailsSection } from "@/lib/types";
 import { getSectionData, updateSectionData } from "@/lib/localStorage";
 import { simulateApiCall } from "@/lib/mockApi";
 import { APPRAISAL_SECTIONS } from "@/lib/constants";
 import { toast } from "sonner";
-import { ArrowLeft, ArrowRight, Save } from "lucide-react";
+import { ArrowLeft, ArrowRight, Save, CalendarIcon } from "lucide-react";
 import AppraisalLayout from "@/components/AppraisalLayout";
+import { cn } from "@/lib/utils";
+import { format } from "date-fns";
 
 export default function GeneralDetails() {
 	const router = useRouter();
 	const [isSubmitting, setIsSubmitting] = useState(false);
 	const [apiScore, setApiScore] = useState<number | null>(null);
+	const [joiningDate, setJoiningDate] = useState<Date | undefined>();
 
 	const currentIndex = APPRAISAL_SECTIONS.findIndex(
 		(s) => s.id === "general-details"
 	);
 	const nextSection = APPRAISAL_SECTIONS[currentIndex + 1];
 
-	const { register, handleSubmit, reset } = useForm<GeneralDetailsForm>({
-		defaultValues: {
-			name: "Dr. Shikha K Mehta",
-			presentDesignation: "",
-			qualifications: "",
-			department: "Computer Science & Engineering",
-			instituteJoiningDate: "",
-			firstDesignation: "",
-			presentPayScaleAndPay: 0,
-			areasOfInterest: "",
-			additionalQualification: "",
-			pursuingHigherStudies: "",
-		},
-	});
+	const { register, handleSubmit, reset, setValue } =
+		useForm<GeneralDetailsForm>({
+			defaultValues: {
+				name: "Dr. Shikha K Mehta",
+				presentDesignation: "",
+				qualifications: "",
+				department: "Computer Science & Engineering",
+				instituteJoiningDate: "",
+				firstDesignation: "",
+				presentPayScaleAndPay: 0,
+				areasOfInterest: "",
+				additionalQualification: "",
+				pursuingHigherStudies: "",
+			},
+		});
 
 	useEffect(() => {
 		const existingData = getSectionData("generalDetails");
@@ -53,6 +63,9 @@ export default function GeneralDetails() {
 			const { ...formData } = existingData as GeneralDetailsSection;
 			reset(formData);
 			setApiScore(existingData.apiScore ?? null);
+			if (formData.instituteJoiningDate) {
+				setJoiningDate(new Date(formData.instituteJoiningDate));
+			}
 		}
 	}, [reset]);
 
@@ -100,7 +113,6 @@ export default function GeneralDetails() {
 									className="bg-muted"
 								/>
 							</div>
-
 							<div className="space-y-2">
 								<Label htmlFor="presentDesignation">Present Designation</Label>
 								<Input
@@ -109,7 +121,6 @@ export default function GeneralDetails() {
 									placeholder="e.g., Assistant Professor"
 								/>
 							</div>
-
 							<div className="space-y-2">
 								<Label htmlFor="qualifications">Qualifications</Label>
 								<Input
@@ -118,7 +129,6 @@ export default function GeneralDetails() {
 									placeholder="e.g., Ph.D., M.Tech"
 								/>
 							</div>
-
 							<div className="space-y-2">
 								<Label htmlFor="department">Department</Label>
 								<Input
@@ -128,18 +138,45 @@ export default function GeneralDetails() {
 									className="bg-muted"
 								/>
 							</div>
-
 							<div className="space-y-2">
 								<Label htmlFor="instituteJoiningDate">
 									Institute Joining Date
 								</Label>
-								<Input
-									type="date"
-									id="instituteJoiningDate"
-									{...register("instituteJoiningDate")}
-								/>
-							</div>
-
+								<Popover>
+									<PopoverTrigger asChild>
+										<Button
+											variant="outline"
+											className={cn(
+												"w-full justify-start text-left font-normal",
+												!joiningDate && "text-muted-foreground"
+											)}
+										>
+											<CalendarIcon className="mr-2 h-4 w-4" />
+											{joiningDate ? (
+												format(joiningDate, "PPP")
+											) : (
+												<span>Pick a date</span>
+											)}
+										</Button>
+									</PopoverTrigger>
+									<PopoverContent className="w-auto p-0" align="start">
+										<Calendar
+											mode="single"
+											selected={joiningDate}
+											onSelect={(date) => {
+												setJoiningDate(date);
+												if (date) {
+													setValue(
+														"instituteJoiningDate",
+														format(date, "yyyy-MM-dd")
+													);
+												}
+											}}
+											initialFocus
+										/>
+									</PopoverContent>
+								</Popover>
+							</div>{" "}
 							<div className="space-y-2">
 								<Label htmlFor="firstDesignation">First Designation</Label>
 								<Input
@@ -148,7 +185,6 @@ export default function GeneralDetails() {
 									placeholder="e.g., Lecturer"
 								/>
 							</div>
-
 							<div className="space-y-2 md:col-span-2">
 								<Label htmlFor="presentPayScaleAndPay">
 									Present Pay Scale & Pay
