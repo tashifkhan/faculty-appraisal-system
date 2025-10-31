@@ -8,7 +8,7 @@ export class ApiError extends Error {
   constructor(
     message: string,
     public status?: number,
-    public data?: any
+    public data?: unknown
   ) {
     super(message);
     this.name = 'ApiError';
@@ -49,7 +49,7 @@ export const setUserId = (userId: string): void => {
 /**
  * Generic fetch wrapper with error handling and authentication
  */
-export async function apiFetch<T = any>(
+export async function apiFetch<T = unknown>(
   url: string,
   options: RequestInit = {}
 ): Promise<T> {
@@ -117,7 +117,7 @@ export async function apiFetch<T = any>(
 /**
  * GET request helper
  */
-export async function apiGet<T = any>(
+export async function apiGet<T = unknown>(
   url: string,
   params?: Record<string, string | number | boolean>
 ): Promise<T> {
@@ -136,9 +136,9 @@ export async function apiGet<T = any>(
 /**
  * POST request helper
  */
-export async function apiPost<T = any>(
+export async function apiPost<T = unknown>(
   url: string,
-  data?: any
+  data?: unknown
 ): Promise<T> {
   return apiFetch<T>(url, {
     method: 'POST',
@@ -149,9 +149,9 @@ export async function apiPost<T = any>(
 /**
  * PUT request helper
  */
-export async function apiPut<T = any>(
+export async function apiPut<T = unknown>(
   url: string,
-  data?: any
+  data?: unknown
 ): Promise<T> {
   return apiFetch<T>(url, {
     method: 'PUT',
@@ -162,7 +162,7 @@ export async function apiPut<T = any>(
 /**
  * DELETE request helper
  */
-export async function apiDelete<T = any>(
+export async function apiDelete<T = unknown>(
   url: string
 ): Promise<T> {
   return apiFetch<T>(url, { method: 'DELETE' });
@@ -174,7 +174,7 @@ export async function apiDelete<T = any>(
 export async function getItemBySection(
   section: string,
   userId?: string
-): Promise<any> {
+): Promise<unknown> {
   const user_id = userId || getUserId();
   return apiGet(API_ENDPOINTS.GET_ITEM_BY_SECTION, {
     user_id,

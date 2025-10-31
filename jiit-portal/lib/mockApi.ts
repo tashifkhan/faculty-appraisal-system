@@ -13,7 +13,6 @@ import {
   apiFetch, 
   getUserId, 
   getItemBySection as getItemBySectionUtil,
-  getBackendSectionKey,
   isValidSectionId 
 } from './api';
 import {
@@ -27,7 +26,6 @@ import {
   ReadingMaterialEntry,
   ReadingMaterialSection,
   ProjectGuidanceSection,
-  ExamDutiesSection,
   ExamDutyEntry,
   BooksChaptersSection,
   BookChapterEntry,
@@ -40,6 +38,17 @@ import {
   StudentActivitiesSection,
   OtherInfoSection,
 } from './types';
+
+/**
+ * API Response type for backend responses
+ */
+interface ApiResponse {
+  message: string;
+  result?: {
+    score?: number;
+    [key: string]: unknown;
+  };
+}
 
 /**
  * Get data for a specific section
@@ -84,7 +93,7 @@ export const calculateGeneralDetailsScore = async (
   );
 
   // Fetch the updated data with score
-  const result = await getItemBySection('1-10', user_id);
+  const result = await getItemBySection('1-10', user_id) as { score?: number };
   const score = result?.score || 10; // Default score if not returned
   
   return {
@@ -129,7 +138,7 @@ export const calculateConferenceScore = async (
     data,
   };
 
-  const response = await apiFetch<{ message: string; result: any }>(
+  const response = await apiFetch<ApiResponse>(
     API_ENDPOINTS.INJEST_ITEM_11,
     {
       method: 'POST',
@@ -178,7 +187,7 @@ export const calculateLecturesScore = async (
       data: transformLecturesToBackend(oddSemester),
     };
     
-    const oddResponse = await apiFetch<{ message: string; result: any }>(
+    const oddResponse = await apiFetch<ApiResponse>(
       API_ENDPOINTS.INJEST_ITEM_12_1,
       {
         method: 'POST',
@@ -197,7 +206,7 @@ export const calculateLecturesScore = async (
       data: transformLecturesToBackend(evenSemester),
     };
     
-    const evenResponse = await apiFetch<{ message: string; result: any }>(
+    const evenResponse = await apiFetch<ApiResponse>(
       API_ENDPOINTS.INJEST_ITEM_12_1,
       {
         method: 'POST',
@@ -261,7 +270,7 @@ export const calculateProjectGuidanceScore = async (
     data,
   };
 
-  const response = await apiFetch<{ message: string; result: any }>(
+  const response = await apiFetch<ApiResponse>(
     API_ENDPOINTS.INJEST_ITEM_12_3_TO_12_4,
     {
       method: 'POST',
@@ -337,7 +346,7 @@ export const calculateStudentActivitiesScore = async (
     data: transformedData,
   };
 
-  const response = await apiFetch<{ message: string; result: any }>(
+  const response = await apiFetch<ApiResponse>(
     API_ENDPOINTS.INJEST_ITEM_13,
     {
       method: 'POST',
@@ -385,7 +394,7 @@ export const calculateResearchPapersScore = async (
     data,
   };
 
-  const response = await apiFetch<{ message: string; result: any }>(
+  const response = await apiFetch<ApiResponse>(
     API_ENDPOINTS.INJEST_ITEM_14,
     {
       method: 'POST',
@@ -432,7 +441,7 @@ export const calculateBooksChaptersScore = async (
     data,
   };
 
-  const response = await apiFetch<{ message: string; result: any }>(
+  const response = await apiFetch<ApiResponse>(
     API_ENDPOINTS.INJEST_ITEM_15,
     {
       method: 'POST',
@@ -483,7 +492,7 @@ export const calculateResearchProjectsScore = async (
     data,
   };
 
-  const response = await apiFetch<{ message: string; result: any }>(
+  const response = await apiFetch<ApiResponse>(
     API_ENDPOINTS.INJEST_ITEM_16,
     {
       method: 'POST',
@@ -531,7 +540,7 @@ export const calculateResearchGuidanceScore = async (
     data,
   };
 
-  const response = await apiFetch<{ message: string; result: any }>(
+  const response = await apiFetch<ApiResponse>(
     API_ENDPOINTS.INJEST_ITEM_17,
     {
       method: 'POST',
@@ -571,7 +580,7 @@ export const calculateMembershipsScore = async (
     data,
   };
 
-  const response = await apiFetch<{ message: string; result: any }>(
+  const response = await apiFetch<ApiResponse>(
     API_ENDPOINTS.INJEST_ITEM_18,
     {
       method: 'POST',
@@ -619,7 +628,7 @@ export const calculateOtherInfoScore = async (
     data: transformedData,
   };
 
-  const response = await apiFetch<{ message: string; result: any }>(
+  const response = await apiFetch<ApiResponse>(
     API_ENDPOINTS.INJEST_ITEM_19,
     {
       method: 'POST',
