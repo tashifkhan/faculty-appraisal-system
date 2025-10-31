@@ -1,3 +1,21 @@
+// Backend API Configuration
+export const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000';
+export const API_ENDPOINTS = {
+  BASE: `${API_BASE_URL}/api`,
+  GET_ITEM_BY_SECTION: `${API_BASE_URL}/api/get-item-by-section/`,
+  INJEST_ITEM_1_TO_10: `${API_BASE_URL}/api/injest-item-1-to-10/`,
+  INJEST_ITEM_11: `${API_BASE_URL}/api/injest-item-11/`,
+  INJEST_ITEM_12_1: `${API_BASE_URL}/api/injest-item-12-1/`,
+  INJEST_ITEM_12_3_TO_12_4: `${API_BASE_URL}/api/injest-item-12-3-to-12-4/`,
+  INJEST_ITEM_13: `${API_BASE_URL}/api/injest-item-13/`,
+  INJEST_ITEM_14: `${API_BASE_URL}/api/injest-item-14/`,
+  INJEST_ITEM_15: `${API_BASE_URL}/api/injest-item-15/`,
+  INJEST_ITEM_16: `${API_BASE_URL}/api/injest-item-16/`,
+  INJEST_ITEM_17: `${API_BASE_URL}/api/injest-item-17/`,
+  INJEST_ITEM_18: `${API_BASE_URL}/api/injest-item-18/`,
+  INJEST_ITEM_19: `${API_BASE_URL}/api/injest-item-19/`,
+} as const;
+
 export const APPRAISAL_SECTIONS = [
   { id: 'general-details', title: '1. General Details', route: '/appraisal/general-details' },
   { id: '11-conference-events', title: '2. Conference and All', route: '/appraisal/11-conference-events' },
@@ -22,3 +40,15 @@ export const PUBLICATION_TYPES = [
   { value: 'OA', label: 'Open Access' },
   { value: 'OJ', label: 'Other Journal' },
 ] as const;
+
+// Helper type to extract section IDs
+export type AppraisalSectionId = typeof APPRAISAL_SECTIONS[number]['id'];
+
+// Helper to get all section IDs as an array
+export const SECTION_IDS = APPRAISAL_SECTIONS.map(section => section.id);
+
+// Helper to get section by ID
+export const getSectionById = (id: string) => {
+  return APPRAISAL_SECTIONS.find(section => section.id === id);
+};
+
