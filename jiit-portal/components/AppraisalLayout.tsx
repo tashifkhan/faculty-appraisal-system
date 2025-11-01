@@ -22,7 +22,10 @@ interface AppraisalLayoutProps {
 export default function AppraisalLayout({ children }: AppraisalLayoutProps) {
 	const pathname = usePathname();
 	const router = useRouter();
-	const [sidebarOpen, setSidebarOpen] = useState(true);
+	// Initialize sidebar open state based on viewport: open on md+ by default, closed on mobile
+	const [sidebarOpen, setSidebarOpen] = useState<boolean>(() =>
+		typeof window !== "undefined" ? window.innerWidth >= 768 : true
+	);
 	const [appraisalData, setAppraisalData] = useState(getAppraisalData());
 	const user = getUser();
 
@@ -35,6 +38,11 @@ export default function AppraisalLayout({ children }: AppraisalLayoutProps) {
 
 		// Refresh appraisal data when location changes
 		setAppraisalData(getAppraisalData());
+
+		// If on a small screen, close the sidebar when navigating between sections
+		if (typeof window !== "undefined" && window.innerWidth < 768) {
+			setSidebarOpen(false);
+		}
 	}, [pathname, router]);
 
 	const handleLogout = () => {
