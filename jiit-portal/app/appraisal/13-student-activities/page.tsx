@@ -33,9 +33,11 @@ import { simulateApiCall } from "@/lib/mockApi";
 import { APPRAISAL_SECTIONS } from "@/lib/constants";
 import { ArrowLeft, ArrowRight, Plus, Save, Trash2 } from "lucide-react";
 import { toast } from "sonner";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 export default function StudentActivitiesPage() {
 	const router = useRouter();
+	const isMobile = useIsMobile();
 	const [activeTab, setActiveTab] = useState<"A" | "B" | "C" | "D" | "E">("A");
 	const [isSubmitting, setIsSubmitting] = useState(false);
 	const [apiScore, setApiScore] = useState<number | null>(null);
@@ -310,33 +312,33 @@ export default function StudentActivitiesPage() {
 
 					<form onSubmit={onSubmit} className="space-y-6">
 						{/* Tab Navigation */}
-						<div className="flex gap-2 border-b overflow-x-auto">
+						<div className="flex gap-1 md:gap-2 border-b overflow-x-auto">
 							<button
 								type="button"
 								onClick={() => setActiveTab("A")}
-								className={`px-4 py-2 font-medium text-sm whitespace-nowrap transition-colors ${
+								className={`px-2 md:px-4 py-2 font-medium text-xs md:text-sm whitespace-nowrap transition-colors ${
 									activeTab === "A"
 										? "border-b-2 border-primary text-primary"
 										: "text-muted-foreground hover:text-foreground"
 								}`}
 							>
-								Societies/Hubs
+								Societies
 							</button>
 							<button
 								type="button"
 								onClick={() => setActiveTab("B")}
-								className={`px-4 py-2 font-medium text-sm whitespace-nowrap transition-colors ${
+								className={`px-2 md:px-4 py-2 font-medium text-xs md:text-sm whitespace-nowrap transition-colors ${
 									activeTab === "B"
 										? "border-b-2 border-primary text-primary"
 										: "text-muted-foreground hover:text-foreground"
 								}`}
 							>
-								Departmental
+								Dept.
 							</button>
 							<button
 								type="button"
 								onClick={() => setActiveTab("C")}
-								className={`px-4 py-2 font-medium text-sm whitespace-nowrap transition-colors ${
+								className={`px-2 md:px-4 py-2 font-medium text-xs md:text-sm whitespace-nowrap transition-colors ${
 									activeTab === "C"
 										? "border-b-2 border-primary text-primary"
 										: "text-muted-foreground hover:text-foreground"
@@ -347,7 +349,7 @@ export default function StudentActivitiesPage() {
 							<button
 								type="button"
 								onClick={() => setActiveTab("D")}
-								className={`px-4 py-2 font-medium text-sm whitespace-nowrap transition-colors ${
+								className={`px-2 md:px-4 py-2 font-medium text-xs md:text-sm whitespace-nowrap transition-colors ${
 									activeTab === "D"
 										? "border-b-2 border-primary text-primary"
 										: "text-muted-foreground hover:text-foreground"
@@ -358,7 +360,7 @@ export default function StudentActivitiesPage() {
 							<button
 								type="button"
 								onClick={() => setActiveTab("E")}
-								className={`px-4 py-2 font-medium text-sm whitespace-nowrap transition-colors ${
+								className={`px-2 md:px-4 py-2 font-medium text-xs md:text-sm whitespace-nowrap transition-colors ${
 									activeTab === "E"
 										? "border-b-2 border-primary text-primary"
 										: "text-muted-foreground hover:text-foreground"
@@ -371,12 +373,12 @@ export default function StudentActivitiesPage() {
 						{/* Section A: Societies/Hubs */}
 						{activeTab === "A" && (
 							<div className="space-y-4">
-								<div className="flex items-center justify-between">
-									<div>
-										<h3 className="text-lg font-semibold">
+								<div className="flex items-start md:items-center justify-between flex-wrap gap-2 md:gap-4">
+									<div className="flex-1">
+										<h3 className="text-base md:text-lg font-semibold">
 											A. Societies/Hubs (Event Details)
 										</h3>
-										<p className="text-sm text-muted-foreground">
+										<p className="text-xs md:text-sm text-muted-foreground">
 											5 points per activity, 10 if lead role (max 20 points)
 										</p>
 									</div>
@@ -391,99 +393,177 @@ export default function StudentActivitiesPage() {
 									</Button>
 								</div>
 
-								<div className="rounded-lg border overflow-x-auto">
-									<table className="w-full text-sm">
-										<thead className="bg-muted/50 text-muted-foreground">
-											<tr>
-												<th className="px-4 py-3 text-left w-[25%]">
-													Name of Club
-												</th>
-												<th className="px-4 py-3 text-left w-[15%]">
-													Played Lead Role
-												</th>
-												<th className="px-4 py-3 text-left w-[50%]">
-													Details of Activities
-												</th>
-												<th className="px-4 py-3 w-[10%]"></th>
-											</tr>
-										</thead>
-										<tbody>
-											{sectionA.map((e) => (
-												<tr key={e.id} className="border-t align-top">
-													<td className="p-3">
-														<Input
-															value={e.nameOfClub}
-															onChange={(ev) =>
-																updateSectionA(
-																	e.id,
-																	"nameOfClub",
-																	ev.target.value
-																)
-															}
-															placeholder="e.g., Google Developer Group"
-														/>
-													</td>
-													<td className="p-3">
-														<Select
-															value={e.playedLeadRole ? "true" : "false"}
-															onValueChange={(value) =>
-																updateSectionA(
-																	e.id,
-																	"playedLeadRole",
-																	value === "true"
-																)
-															}
-														>
-															<SelectTrigger>
-																<SelectValue />
-															</SelectTrigger>
-															<SelectContent>
-																<SelectItem value="true">Yes</SelectItem>
-																<SelectItem value="false">No</SelectItem>
-															</SelectContent>
-														</Select>
-													</td>
-													<td className="p-3">
-														<Textarea
-															value={e.detailsOfActivities}
-															onChange={(ev) =>
-																updateSectionA(
-																	e.id,
-																	"detailsOfActivities",
-																	ev.target.value
-																)
-															}
-															placeholder="Describe activities, responsibilities, achievements..."
-															rows={2}
-														/>
-													</td>
-													<td className="p-3 text-right">
-														<Button
-															type="button"
-															variant="ghost"
-															size="icon"
-															onClick={() => removeSectionA(e.id)}
-														>
-															<Trash2 className="h-4 w-4" />
-														</Button>
-													</td>
+								{isMobile ? (
+									<div className="space-y-3">
+										{sectionA.map((e) => (
+											<div
+												key={e.id}
+												className="border rounded-lg p-3 md:p-4 space-y-3"
+											>
+												<div className="space-y-1">
+													<label className="text-xs md:text-sm font-medium text-muted-foreground">
+														Name of Club
+													</label>
+													<Input
+														value={e.nameOfClub}
+														onChange={(ev) =>
+															updateSectionA(
+																e.id,
+																"nameOfClub",
+																ev.target.value
+															)
+														}
+														placeholder="e.g., Google Developer Group"
+													/>
+												</div>
+												<div className="space-y-1">
+													<label className="text-xs md:text-sm font-medium text-muted-foreground">
+														Played Lead Role
+													</label>
+													<Select
+														value={e.playedLeadRole ? "true" : "false"}
+														onValueChange={(value) =>
+															updateSectionA(
+																e.id,
+																"playedLeadRole",
+																value === "true"
+															)
+														}
+													>
+														<SelectTrigger>
+															<SelectValue />
+														</SelectTrigger>
+														<SelectContent>
+															<SelectItem value="true">Yes</SelectItem>
+															<SelectItem value="false">No</SelectItem>
+														</SelectContent>
+													</Select>
+												</div>
+												<div className="space-y-1">
+													<label className="text-xs md:text-sm font-medium text-muted-foreground">
+														Details of Activities
+													</label>
+													<Textarea
+														value={e.detailsOfActivities}
+														onChange={(ev) =>
+															updateSectionA(
+																e.id,
+																"detailsOfActivities",
+																ev.target.value
+															)
+														}
+														placeholder="Describe activities, responsibilities, achievements..."
+														rows={2}
+													/>
+												</div>
+												<div className="flex justify-end pt-1">
+													<Button
+														type="button"
+														variant="ghost"
+														size="icon"
+														onClick={() => removeSectionA(e.id)}
+													>
+														<Trash2 className="h-4 w-4" />
+													</Button>
+												</div>
+											</div>
+										))}
+									</div>
+								) : (
+									<div className="rounded-lg border overflow-x-auto">
+										<table className="w-full text-sm">
+											<thead className="bg-muted/50 text-muted-foreground">
+												<tr>
+													<th className="px-4 py-3 text-left md:w-[25%]">
+														Name of Club
+													</th>
+													<th className="px-4 py-3 text-left md:w-[15%]">
+														Played Lead Role
+													</th>
+													<th className="px-4 py-3 text-left md:w-[50%]">
+														Details of Activities
+													</th>
+													<th className="px-4 py-3 md:w-[10%]"></th>
 												</tr>
-											))}
-										</tbody>
-									</table>
-								</div>
+											</thead>
+											<tbody>
+												{sectionA.map((e) => (
+													<tr key={e.id} className="border-t align-top">
+														<td className="p-3">
+															<Input
+																value={e.nameOfClub}
+																onChange={(ev) =>
+																	updateSectionA(
+																		e.id,
+																		"nameOfClub",
+																		ev.target.value
+																	)
+																}
+																placeholder="e.g., Google Developer Group"
+															/>
+														</td>
+														<td className="p-3">
+															<Select
+																value={e.playedLeadRole ? "true" : "false"}
+																onValueChange={(value) =>
+																	updateSectionA(
+																		e.id,
+																		"playedLeadRole",
+																		value === "true"
+																	)
+																}
+															>
+																<SelectTrigger>
+																	<SelectValue />
+																</SelectTrigger>
+																<SelectContent>
+																	<SelectItem value="true">Yes</SelectItem>
+																	<SelectItem value="false">No</SelectItem>
+																</SelectContent>
+															</Select>
+														</td>
+														<td className="p-3">
+															<Textarea
+																value={e.detailsOfActivities}
+																onChange={(ev) =>
+																	updateSectionA(
+																		e.id,
+																		"detailsOfActivities",
+																		ev.target.value
+																	)
+																}
+																placeholder="Describe activities, responsibilities, achievements..."
+																rows={2}
+															/>
+														</td>
+														<td className="p-3 text-right">
+															<Button
+																type="button"
+																variant="ghost"
+																size="icon"
+																onClick={() => removeSectionA(e.id)}
+															>
+																<Trash2 className="h-4 w-4" />
+															</Button>
+														</td>
+													</tr>
+												))}
+											</tbody>
+										</table>
+									</div>
+								)}
 							</div>
 						)}
 
 						{/* Section B: Departmental Activities */}
 						{activeTab === "B" && (
 							<div className="space-y-4">
-								<div className="flex items-center justify-between">
-									<div>
-										<h3 className="text-lg font-semibold">
+								<div className="flex items-start md:items-center justify-between flex-wrap gap-2 md:gap-4">
+									<div className="flex-1">
+										<h3 className="text-base md:text-lg font-semibold">
 											B. Departmental Activities & Development
 										</h3>
-										<p className="text-sm text-muted-foreground">
+										<p className="text-xs md:text-sm text-muted-foreground">
 											5 points for Incharge/Chairman, 3 for member (max 20
 											points)
 										</p>
@@ -499,77 +579,138 @@ export default function StudentActivitiesPage() {
 									</Button>
 								</div>
 
-								<div className="rounded-lg border overflow-x-auto">
-									<table className="w-full text-sm">
-										<thead className="bg-muted/50 text-muted-foreground">
-											<tr>
-												<th className="px-4 py-3 text-left w-[30%]">Role</th>
-												<th className="px-4 py-3 text-left w-[60%]">
-													Details of Activities
-												</th>
-												<th className="px-4 py-3 w-[10%]"></th>
-											</tr>
-										</thead>
-										<tbody>
-											{sectionB.map((e) => (
-												<tr key={e.id} className="border-t align-top">
-													<td className="p-3">
-														<Select
-															value={e.role}
-															onValueChange={(value) =>
-																updateSectionB(e.id, "role", value)
-															}
-														>
-															<SelectTrigger>
-																<SelectValue placeholder="Select role" />
-															</SelectTrigger>
-															<SelectContent>
-																<SelectItem value="Incharge">
-																	Incharge
-																</SelectItem>
-																<SelectItem value="Chairman">
-																	Chairman
-																</SelectItem>
-																<SelectItem value="Member">Member</SelectItem>
-															</SelectContent>
-														</Select>
-													</td>
-													<td className="p-3">
-														<Textarea
-															value={e.detailsOfActivities}
-															onChange={(ev) =>
-																updateSectionB(
-																	e.id,
-																	"detailsOfActivities",
-																	ev.target.value
-																)
-															}
-															placeholder="Describe departmental activities and contributions..."
-															rows={2}
-														/>
-													</td>
-													<td className="p-3 text-right">
-														<Button
-															type="button"
-															variant="ghost"
-															size="icon"
-															onClick={() => removeSectionB(e.id)}
-														>
-															<Trash2 className="h-4 w-4" />
-														</Button>
-													</td>
+								{isMobile ? (
+									<div className="space-y-3">
+										{sectionB.map((e) => (
+											<div
+												key={e.id}
+												className="border rounded-lg p-3 space-y-2"
+											>
+												<div className="space-y-1">
+													<label className="text-xs text-muted-foreground">
+														Role
+													</label>
+													<Select
+														value={e.role}
+														onValueChange={(value) =>
+															updateSectionB(e.id, "role", value)
+														}
+													>
+														<SelectTrigger>
+															<SelectValue placeholder="Select role" />
+														</SelectTrigger>
+														<SelectContent>
+															<SelectItem value="Incharge">Incharge</SelectItem>
+															<SelectItem value="Chairman">Chairman</SelectItem>
+															<SelectItem value="Member">Member</SelectItem>
+														</SelectContent>
+													</Select>
+												</div>
+												<div className="space-y-1">
+													<label className="text-xs text-muted-foreground">
+														Details of Activities
+													</label>
+													<Textarea
+														value={e.detailsOfActivities}
+														onChange={(ev) =>
+															updateSectionB(
+																e.id,
+																"detailsOfActivities",
+																ev.target.value
+															)
+														}
+														placeholder="Describe departmental activities and contributions..."
+														rows={2}
+													/>
+												</div>
+												<div className="flex justify-end pt-1">
+													<Button
+														type="button"
+														variant="ghost"
+														size="icon"
+														onClick={() => removeSectionB(e.id)}
+													>
+														<Trash2 className="h-4 w-4" />
+													</Button>
+												</div>
+											</div>
+										))}
+									</div>
+								) : (
+									<div className="rounded-lg border overflow-x-auto">
+										<table className="w-full text-sm">
+											<thead className="bg-muted/50 text-muted-foreground">
+												<tr>
+													<th className="px-4 py-3 text-left md:w-[30%]">
+														Role
+													</th>
+													<th className="px-4 py-3 text-left md:w-[60%]">
+														Details of Activities
+													</th>
+													<th className="px-4 py-3 md:w-[10%]"></th>
 												</tr>
-											))}
-										</tbody>
-									</table>
-								</div>
+											</thead>
+											<tbody>
+												{sectionB.map((e) => (
+													<tr key={e.id} className="border-t align-top">
+														<td className="p-3">
+															<Select
+																value={e.role}
+																onValueChange={(value) =>
+																	updateSectionB(e.id, "role", value)
+																}
+															>
+																<SelectTrigger>
+																	<SelectValue placeholder="Select role" />
+																</SelectTrigger>
+																<SelectContent>
+																	<SelectItem value="Incharge">
+																		Incharge
+																	</SelectItem>
+																	<SelectItem value="Chairman">
+																		Chairman
+																	</SelectItem>
+																	<SelectItem value="Member">Member</SelectItem>
+																</SelectContent>
+															</Select>
+														</td>
+														<td className="p-3">
+															<Textarea
+																value={e.detailsOfActivities}
+																onChange={(ev) =>
+																	updateSectionB(
+																		e.id,
+																		"detailsOfActivities",
+																		ev.target.value
+																	)
+																}
+																placeholder="Describe departmental activities and contributions..."
+																rows={2}
+															/>
+														</td>
+														<td className="p-3 text-right">
+															<Button
+																type="button"
+																variant="ghost"
+																size="icon"
+																onClick={() => removeSectionB(e.id)}
+															>
+																<Trash2 className="h-4 w-4" />
+															</Button>
+														</td>
+													</tr>
+												))}
+											</tbody>
+										</table>
+									</div>
+								)}
 							</div>
 						)}
 
 						{/* Section C: Institute Activities */}
 						{activeTab === "C" && (
 							<div className="space-y-4">
-								<div className="flex items-center justify-between">
+								<div className="flex items-start md:items-center justify-between flex-wrap gap-2">
 									<div>
 										<h3 className="text-lg font-semibold">
 											C. Institute Activities & Development
@@ -590,92 +731,166 @@ export default function StudentActivitiesPage() {
 									</Button>
 								</div>
 
-								<div className="rounded-lg border overflow-x-auto">
-									<table className="w-full text-sm">
-										<thead className="bg-muted/50 text-muted-foreground">
-											<tr>
-												<th className="px-4 py-3 text-left w-[30%]">
-													Position Type
-												</th>
-												<th className="px-4 py-3 text-left w-[60%]">
-													Details of Activities
-												</th>
-												<th className="px-4 py-3 w-[10%]"></th>
-											</tr>
-										</thead>
-										<tbody>
-											{sectionC.map((e) => (
-												<tr key={e.id} className="border-t align-top">
-													<td className="p-3">
-														<Select
-															value={e.positionType}
-															onValueChange={(value) =>
-																updateSectionC(e.id, "positionType", value)
-															}
-														>
-															<SelectTrigger>
-																<SelectValue placeholder="Select position" />
-															</SelectTrigger>
-															<SelectContent>
-																<SelectItem value="Director">
-																	Director
-																</SelectItem>
-																<SelectItem value="Dean">Dean</SelectItem>
-																<SelectItem value="HOD">HOD</SelectItem>
-																<SelectItem value="Time Table Incharge">
-																	Time Table Incharge
-																</SelectItem>
-																<SelectItem value="Training & Placement Incharge">
-																	Training & Placement Incharge
-																</SelectItem>
-																<SelectItem value="Chairman - Institution Committee">
-																	Chairman - Institution Committee
-																</SelectItem>
-																<SelectItem value="Member - Institution Committee">
-																	Member - Institution Committee
-																</SelectItem>
-																<SelectItem value="Individual Responsibility">
-																	Individual Responsibility
-																</SelectItem>
-															</SelectContent>
-														</Select>
-													</td>
-													<td className="p-3">
-														<Textarea
-															value={e.detailsOfActivities}
-															onChange={(ev) =>
-																updateSectionC(
-																	e.id,
-																	"detailsOfActivities",
-																	ev.target.value
-																)
-															}
-															placeholder="Describe institute-level activities and responsibilities..."
-															rows={2}
-														/>
-													</td>
-													<td className="p-3 text-right">
-														<Button
-															type="button"
-															variant="ghost"
-															size="icon"
-															onClick={() => removeSectionC(e.id)}
-														>
-															<Trash2 className="h-4 w-4" />
-														</Button>
-													</td>
+								{isMobile ? (
+									<div className="space-y-3">
+										{sectionC.map((e) => (
+											<div
+												key={e.id}
+												className="border rounded-lg p-3 space-y-2"
+											>
+												<div className="space-y-1">
+													<label className="text-xs text-muted-foreground">
+														Position Type
+													</label>
+													<Select
+														value={e.positionType}
+														onValueChange={(value) =>
+															updateSectionC(e.id, "positionType", value)
+														}
+													>
+														<SelectTrigger>
+															<SelectValue placeholder="Select position" />
+														</SelectTrigger>
+														<SelectContent>
+															<SelectItem value="Director">Director</SelectItem>
+															<SelectItem value="Dean">Dean</SelectItem>
+															<SelectItem value="HOD">HOD</SelectItem>
+															<SelectItem value="Time Table Incharge">
+																Time Table Incharge
+															</SelectItem>
+															<SelectItem value="Training & Placement Incharge">
+																Training & Placement Incharge
+															</SelectItem>
+															<SelectItem value="Chairman - Institution Committee">
+																Chairman - Institution Committee
+															</SelectItem>
+															<SelectItem value="Member - Institution Committee">
+																Member - Institution Committee
+															</SelectItem>
+															<SelectItem value="Individual Responsibility">
+																Individual Responsibility
+															</SelectItem>
+														</SelectContent>
+													</Select>
+												</div>
+												<div className="space-y-1">
+													<label className="text-xs text-muted-foreground">
+														Details of Activities
+													</label>
+													<Textarea
+														value={e.detailsOfActivities}
+														onChange={(ev) =>
+															updateSectionC(
+																e.id,
+																"detailsOfActivities",
+																ev.target.value
+															)
+														}
+														placeholder="Describe institute-level activities and responsibilities..."
+														rows={2}
+													/>
+												</div>
+												<div className="flex justify-end pt-1">
+													<Button
+														type="button"
+														variant="ghost"
+														size="icon"
+														onClick={() => removeSectionC(e.id)}
+													>
+														<Trash2 className="h-4 w-4" />
+													</Button>
+												</div>
+											</div>
+										))}
+									</div>
+								) : (
+									<div className="rounded-lg border overflow-x-auto">
+										<table className="w-full text-sm">
+											<thead className="bg-muted/50 text-muted-foreground">
+												<tr>
+													<th className="px-4 py-3 text-left md:w-[30%]">
+														Position Type
+													</th>
+													<th className="px-4 py-3 text-left md:w-[60%]">
+														Details of Activities
+													</th>
+													<th className="px-4 py-3 md:w-[10%]"></th>
 												</tr>
-											))}
-										</tbody>
-									</table>
-								</div>
+											</thead>
+											<tbody>
+												{sectionC.map((e) => (
+													<tr key={e.id} className="border-t align-top">
+														<td className="p-3">
+															<Select
+																value={e.positionType}
+																onValueChange={(value) =>
+																	updateSectionC(e.id, "positionType", value)
+																}
+															>
+																<SelectTrigger>
+																	<SelectValue placeholder="Select position" />
+																</SelectTrigger>
+																<SelectContent>
+																	<SelectItem value="Director">
+																		Director
+																	</SelectItem>
+																	<SelectItem value="Dean">Dean</SelectItem>
+																	<SelectItem value="HOD">HOD</SelectItem>
+																	<SelectItem value="Time Table Incharge">
+																		Time Table Incharge
+																	</SelectItem>
+																	<SelectItem value="Training & Placement Incharge">
+																		Training & Placement Incharge
+																	</SelectItem>
+																	<SelectItem value="Chairman - Institution Committee">
+																		Chairman - Institution Committee
+																	</SelectItem>
+																	<SelectItem value="Member - Institution Committee">
+																		Member - Institution Committee
+																	</SelectItem>
+																	<SelectItem value="Individual Responsibility">
+																		Individual Responsibility
+																	</SelectItem>
+																</SelectContent>
+															</Select>
+														</td>
+														<td className="p-3">
+															<Textarea
+																value={e.detailsOfActivities}
+																onChange={(ev) =>
+																	updateSectionC(
+																		e.id,
+																		"detailsOfActivities",
+																		ev.target.value
+																	)
+																}
+																placeholder="Describe institute-level activities and responsibilities..."
+																rows={2}
+															/>
+														</td>
+														<td className="p-3 text-right">
+															<Button
+																type="button"
+																variant="ghost"
+																size="icon"
+																onClick={() => removeSectionC(e.id)}
+															>
+																<Trash2 className="h-4 w-4" />
+															</Button>
+														</td>
+													</tr>
+												))}
+											</tbody>
+										</table>
+									</div>
+								)}
 							</div>
 						)}
 
 						{/* Section D: Lectures Delivered */}
 						{activeTab === "D" && (
 							<div className="space-y-4">
-								<div className="flex items-center justify-between">
+								<div className="flex items-start md:items-center justify-between flex-wrap gap-2">
 									<div>
 										<h3 className="text-lg font-semibold">
 											D. Special/Extension/Expert/Invited Lectures Delivered
@@ -696,76 +911,140 @@ export default function StudentActivitiesPage() {
 									</Button>
 								</div>
 
-								<div className="rounded-lg border overflow-x-auto">
-									<table className="w-full text-sm">
-										<thead className="bg-muted/50 text-muted-foreground">
-											<tr>
-												<th className="px-4 py-3 text-left w-[30%]">Nature</th>
-												<th className="px-4 py-3 text-left w-[60%]">
-													Details of Activities
-												</th>
-												<th className="px-4 py-3 w-[10%]"></th>
-											</tr>
-										</thead>
-										<tbody>
-											{sectionD.map((e) => (
-												<tr key={e.id} className="border-t align-top">
-													<td className="p-3">
-														<Select
-															value={e.nature}
-															onValueChange={(value) =>
-																updateSectionD(e.id, "nature", value)
-															}
-														>
-															<SelectTrigger>
-																<SelectValue placeholder="Select nature" />
-															</SelectTrigger>
-															<SelectContent>
-																<SelectItem value="Outside Institute">
-																	Outside Institute
-																</SelectItem>
-																<SelectItem value="Within Institute">
-																	Within Institute
-																</SelectItem>
-															</SelectContent>
-														</Select>
-													</td>
-													<td className="p-3">
-														<Textarea
-															value={e.detailsOfActivities}
-															onChange={(ev) =>
-																updateSectionD(
-																	e.id,
-																	"detailsOfActivities",
-																	ev.target.value
-																)
-															}
-															placeholder="Describe lecture topic, venue, audience, date..."
-															rows={2}
-														/>
-													</td>
-													<td className="p-3 text-right">
-														<Button
-															type="button"
-															variant="ghost"
-															size="icon"
-															onClick={() => removeSectionD(e.id)}
-														>
-															<Trash2 className="h-4 w-4" />
-														</Button>
-													</td>
+								{isMobile ? (
+									<div className="space-y-3">
+										{sectionD.map((e) => (
+											<div
+												key={e.id}
+												className="border rounded-lg p-3 space-y-2"
+											>
+												<div className="space-y-1">
+													<label className="text-xs text-muted-foreground">
+														Nature
+													</label>
+													<Select
+														value={e.nature}
+														onValueChange={(value) =>
+															updateSectionD(e.id, "nature", value)
+														}
+													>
+														<SelectTrigger>
+															<SelectValue placeholder="Select nature" />
+														</SelectTrigger>
+														<SelectContent>
+															<SelectItem value="Outside Institute">
+																Outside Institute
+															</SelectItem>
+															<SelectItem value="Within Institute">
+																Within Institute
+															</SelectItem>
+														</SelectContent>
+													</Select>
+												</div>
+												<div className="space-y-1">
+													<label className="text-xs text-muted-foreground">
+														Details of Activities
+													</label>
+													<Textarea
+														value={e.detailsOfActivities}
+														onChange={(ev) =>
+															updateSectionD(
+																e.id,
+																"detailsOfActivities",
+																ev.target.value
+															)
+														}
+														placeholder="Describe lecture topic, venue, audience, date..."
+														rows={2}
+													/>
+												</div>
+												<div className="flex justify-end pt-1">
+													<Button
+														type="button"
+														variant="ghost"
+														size="icon"
+														onClick={() => removeSectionD(e.id)}
+													>
+														<Trash2 className="h-4 w-4" />
+													</Button>
+												</div>
+											</div>
+										))}
+									</div>
+								) : (
+									<div className="rounded-lg border overflow-x-auto">
+										<table className="w-full text-sm">
+											<thead className="bg-muted/50 text-muted-foreground">
+												<tr>
+													<th className="px-4 py-3 text-left md:w-[30%]">
+														Nature
+													</th>
+													<th className="px-4 py-3 text-left md:w-[60%]">
+														Details of Activities
+													</th>
+													<th className="px-4 py-3 md:w-[10%]"></th>
 												</tr>
-											))}
-										</tbody>
-									</table>
-								</div>
+											</thead>
+											<tbody>
+												{sectionD.map((e) => (
+													<tr key={e.id} className="border-t align-top">
+														<td className="p-3">
+															<Select
+																value={e.nature}
+																onValueChange={(value) =>
+																	updateSectionD(e.id, "nature", value)
+																}
+															>
+																<SelectTrigger>
+																	<SelectValue placeholder="Select nature" />
+																</SelectTrigger>
+																<SelectContent>
+																	<SelectItem value="Outside Institute">
+																		Outside Institute
+																	</SelectItem>
+																	<SelectItem value="Within Institute">
+																		Within Institute
+																	</SelectItem>
+																</SelectContent>
+															</Select>
+														</td>
+														<td className="p-3">
+															<Textarea
+																value={e.detailsOfActivities}
+																onChange={(ev) =>
+																	updateSectionD(
+																		e.id,
+																		"detailsOfActivities",
+																		ev.target.value
+																	)
+																}
+																placeholder="Describe lecture topic, venue, audience, date..."
+																rows={2}
+															/>
+														</td>
+														<td className="p-3 text-right">
+															<Button
+																type="button"
+																variant="ghost"
+																size="icon"
+																onClick={() => removeSectionD(e.id)}
+															>
+																<Trash2 className="h-4 w-4" />
+															</Button>
+														</td>
+													</tr>
+												))}
+											</tbody>
+										</table>
+									</div>
+								)}
 							</div>
 						)}
 
 						{/* Section E: Articles/Reports */}
 						{activeTab === "E" && (
 							<div className="space-y-4">
-								<div className="flex items-center justify-between">
+								<div className="flex items-start md:items-center justify-between flex-wrap gap-2">
 									<div>
 										<h3 className="text-lg font-semibold">
 											E. Articles, Monographs, Technical Reports, Reviews
@@ -787,66 +1066,127 @@ export default function StudentActivitiesPage() {
 									</Button>
 								</div>
 
-								<div className="rounded-lg border overflow-x-auto">
-									<table className="w-full text-sm">
-										<thead className="bg-muted/50 text-muted-foreground">
-											<tr>
-												<th className="px-4 py-3 text-left w-[15%]">Points</th>
-												<th className="px-4 py-3 text-left w-[75%]">
-													Details of Activities
-												</th>
-												<th className="px-4 py-3 w-[10%]"></th>
-											</tr>
-										</thead>
-										<tbody>
-											{sectionE.map((e) => (
-												<tr key={e.id} className="border-t align-top">
-													<td className="p-3">
-														<Select
-															value={e.points.toString()}
-															onValueChange={(value) =>
-																updateSectionE(e.id, "points", Number(value))
-															}
-														>
-															<SelectTrigger>
-																<SelectValue placeholder="Points" />
-															</SelectTrigger>
-															<SelectContent>
-																<SelectItem value="1">1</SelectItem>
-																<SelectItem value="2">2</SelectItem>
-																<SelectItem value="3">3</SelectItem>
-															</SelectContent>
-														</Select>
-													</td>
-													<td className="p-3">
-														<Textarea
-															value={e.detailsOfActivities}
-															onChange={(ev) =>
-																updateSectionE(
-																	e.id,
-																	"detailsOfActivities",
-																	ev.target.value
-																)
-															}
-															placeholder="Describe article/monograph/report title, publication, impact..."
-															rows={2}
-														/>
-													</td>
-													<td className="p-3 text-right">
-														<Button
-															type="button"
-															variant="ghost"
-															size="icon"
-															onClick={() => removeSectionE(e.id)}
-														>
-															<Trash2 className="h-4 w-4" />
-														</Button>
-													</td>
+								{isMobile ? (
+									<div className="space-y-3">
+										{sectionE.map((e) => (
+											<div
+												key={e.id}
+												className="border rounded-lg p-3 space-y-2"
+											>
+												<div className="space-y-1">
+													<label className="text-xs text-muted-foreground">
+														Points
+													</label>
+													<Select
+														value={e.points.toString()}
+														onValueChange={(value) =>
+															updateSectionE(e.id, "points", Number(value))
+														}
+													>
+														<SelectTrigger>
+															<SelectValue placeholder="Points" />
+														</SelectTrigger>
+														<SelectContent>
+															<SelectItem value="1">1</SelectItem>
+															<SelectItem value="2">2</SelectItem>
+															<SelectItem value="3">3</SelectItem>
+														</SelectContent>
+													</Select>
+												</div>
+												<div className="space-y-1">
+													<label className="text-xs text-muted-foreground">
+														Details of Activities
+													</label>
+													<Textarea
+														value={e.detailsOfActivities}
+														onChange={(ev) =>
+															updateSectionE(
+																e.id,
+																"detailsOfActivities",
+																ev.target.value
+															)
+														}
+														placeholder="Describe article/monograph/report title, publication, impact..."
+														rows={2}
+													/>
+												</div>
+												<div className="flex justify-end pt-1">
+													<Button
+														type="button"
+														variant="ghost"
+														size="icon"
+														onClick={() => removeSectionE(e.id)}
+													>
+														<Trash2 className="h-4 w-4" />
+													</Button>
+												</div>
+											</div>
+										))}
+									</div>
+								) : (
+									<div className="rounded-lg border overflow-x-auto">
+										<table className="w-full text-sm">
+											<thead className="bg-muted/50 text-muted-foreground">
+												<tr>
+													<th className="px-4 py-3 text-left md:w-[15%]">
+														Points
+													</th>
+													<th className="px-4 py-3 text-left md:w-[75%]">
+														Details of Activities
+													</th>
+													<th className="px-4 py-3 md:w-[10%]"></th>
 												</tr>
-											))}
-										</tbody>
-									</table>
-								</div>
+											</thead>
+											<tbody>
+												{sectionE.map((e) => (
+													<tr key={e.id} className="border-t align-top">
+														<td className="p-3">
+															<Select
+																value={e.points.toString()}
+																onValueChange={(value) =>
+																	updateSectionE(e.id, "points", Number(value))
+																}
+															>
+																<SelectTrigger>
+																	<SelectValue placeholder="Points" />
+																</SelectTrigger>
+																<SelectContent>
+																	<SelectItem value="1">1</SelectItem>
+																	<SelectItem value="2">2</SelectItem>
+																	<SelectItem value="3">3</SelectItem>
+																</SelectContent>
+															</Select>
+														</td>
+														<td className="p-3">
+															<Textarea
+																value={e.detailsOfActivities}
+																onChange={(ev) =>
+																	updateSectionE(
+																		e.id,
+																		"detailsOfActivities",
+																		ev.target.value
+																	)
+																}
+																placeholder="Describe article/monograph/report title, publication, impact..."
+																rows={2}
+															/>
+														</td>
+														<td className="p-3 text-right">
+															<Button
+																type="button"
+																variant="ghost"
+																size="icon"
+																onClick={() => removeSectionE(e.id)}
+															>
+																<Trash2 className="h-4 w-4" />
+															</Button>
+														</td>
+													</tr>
+												))}
+											</tbody>
+										</table>
+									</div>
+								)}
 							</div>
 						)}
 

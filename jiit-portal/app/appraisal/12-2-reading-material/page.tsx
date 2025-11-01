@@ -20,9 +20,11 @@ import { getSectionData, updateSectionData } from "@/lib/localStorage";
 import { simulateApiCall } from "@/lib/mockApi";
 import { ArrowLeft, ArrowRight, Plus, Save, Trash2 } from "lucide-react";
 import { toast } from "sonner";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 export default function ReadingMaterialPage() {
 	const router = useRouter();
+	const isMobile = useIsMobile();
 	const [isSubmitting, setIsSubmitting] = useState(false);
 	const [apiScore, setApiScore] = useState<number | null>(null);
 	const [entries, setEntries] = useState<ReadingMaterialEntry[]>([
@@ -129,89 +131,138 @@ export default function ReadingMaterialPage() {
 					)}
 
 					<form onSubmit={onSubmit} className="space-y-6">
-						<div className="rounded-lg border overflow-x-auto">
-							<table className="w-full text-sm">
-								<thead className="bg-muted/50 text-muted-foreground">
-									<tr>
-										<th className="px-4 py-3 text-left">Course Code</th>
-										<th className="px-4 py-3 text-left">
-											Knowledge Resources Consulted
-										</th>
-										<th className="px-4 py-3 text-left">
-											Knowledge Resources Prescribed
-										</th>
-										<th className="px-4 py-3 text-left">
-											Additional Resources Provided
-										</th>
-										<th className="px-4 py-3"></th>
-									</tr>
-								</thead>
-								<tbody>
-									{entries.map((e) => (
-										<tr key={e.id} className="border-t align-top">
-											<td className="px-4 py-3 w-[140px]">
-												<Input
-													value={e.courseCode}
-													onChange={(ev) =>
-														updateEntry(e.id, "courseCode", ev.target.value)
-													}
-													placeholder="CS101"
-												/>
-											</td>
-											<td className="px-4 py-3 min-w-[280px]">
-												<Textarea
-													rows={3}
-													value={e.consulted}
-													onChange={(ev) =>
-														updateEntry(e.id, "consulted", ev.target.value)
-													}
-													placeholder="Textbooks, online resources..."
-												/>
-											</td>
-											<td className="px-4 py-3 min-w-[280px]">
-												<Textarea
-													rows={3}
-													value={e.prescribed}
-													onChange={(ev) =>
-														updateEntry(e.id, "prescribed", ev.target.value)
-													}
-													placeholder="Prescribed reading list"
-												/>
-											</td>
-											<td className="px-4 py-3 min-w-[280px]">
-												<Textarea
-													rows={3}
-													value={e.additional}
-													onChange={(ev) =>
-														updateEntry(e.id, "additional", ev.target.value)
-													}
-													placeholder="Lecture notes, examples, links..."
-												/>
-											</td>
-											<td className="px-2 py-3 text-right">
-												<Button
-													type="button"
-													size="icon"
-													variant="ghost"
-													onClick={() => removeEntry(e.id)}
-												>
-													<Trash2 className="h-4 w-4" />
-												</Button>
-											</td>
-										</tr>
-									))}
-								</tbody>
-							</table>
-						</div>
+						{isMobile ? (
+							<div className="space-y-3">
+								{entries.map((e) => (
+									<div key={e.id} className="rounded-lg border p-3 space-y-3">
+										<Input
+											value={e.courseCode}
+											onChange={(ev) =>
+												updateEntry(e.id, "courseCode", ev.target.value)
+											}
+											placeholder="Course Code (e.g., CS101)"
+										/>
+										<Textarea
+											rows={3}
+											value={e.consulted}
+											onChange={(ev) =>
+												updateEntry(e.id, "consulted", ev.target.value)
+											}
+											placeholder="Knowledge Resources Consulted"
+										/>
+										<Textarea
+											rows={3}
+											value={e.prescribed}
+											onChange={(ev) =>
+												updateEntry(e.id, "prescribed", ev.target.value)
+											}
+											placeholder="Knowledge Resources Prescribed"
+										/>
+										<Textarea
+											rows={3}
+											value={e.additional}
+											onChange={(ev) =>
+												updateEntry(e.id, "additional", ev.target.value)
+											}
+											placeholder="Additional Resources Provided"
+										/>
+										<div className="flex justify-end">
+											<Button
+												variant="ghost"
+												size="icon"
+												onClick={() => removeEntry(e.id)}
+											>
+												<Trash2 className="h-4 w-4" />
+											</Button>
+										</div>
+									</div>
+								))}
 
-						<Button
-							type="button"
-							variant="outline"
-							onClick={addEntry}
-							className="w-full"
-						>
-							<Plus className="h-4 w-4 mr-2" /> Add New Entry
-						</Button>
+								<Button
+									type="button"
+									variant="outline"
+									onClick={addEntry}
+									className="w-full"
+								>
+									<Plus className="h-4 w-4 mr-2" /> Add New Entry
+								</Button>
+							</div>
+						) : (
+							<div className="rounded-lg border overflow-x-auto">
+								<table className="w-full text-sm">
+									<thead className="bg-muted/50 text-muted-foreground">
+										<tr>
+											<th className="px-4 py-3 text-left">Course Code</th>
+											<th className="px-4 py-3 text-left">
+												Knowledge Resources Consulted
+											</th>
+											<th className="px-4 py-3 text-left">
+												Knowledge Resources Prescribed
+											</th>
+											<th className="px-4 py-3 text-left">
+												Additional Resources Provided
+											</th>
+											<th className="px-4 py-3"></th>
+										</tr>
+									</thead>
+									<tbody>
+										{entries.map((e) => (
+											<tr key={e.id} className="border-t align-top">
+												<td className="px-4 py-3 w-[140px]">
+													<Input
+														value={e.courseCode}
+														onChange={(ev) =>
+															updateEntry(e.id, "courseCode", ev.target.value)
+														}
+														placeholder="CS101"
+													/>
+												</td>
+												<td className="px-4 py-3 md:min-w-[280px]">
+													<Textarea
+														rows={3}
+														value={e.consulted}
+														onChange={(ev) =>
+															updateEntry(e.id, "consulted", ev.target.value)
+														}
+														placeholder="Textbooks, online resources..."
+													/>
+												</td>
+												<td className="px-4 py-3 md:min-w-[280px]">
+													<Textarea
+														rows={3}
+														value={e.prescribed}
+														onChange={(ev) =>
+															updateEntry(e.id, "prescribed", ev.target.value)
+														}
+														placeholder="Prescribed reading list"
+													/>
+												</td>
+												<td className="px-4 py-3 md:min-w-[280px]">
+													<Textarea
+														rows={3}
+														value={e.additional}
+														onChange={(ev) =>
+															updateEntry(e.id, "additional", ev.target.value)
+														}
+														placeholder="Lecture notes, examples, links..."
+													/>
+												</td>
+												<td className="px-2 py-3 text-right">
+													<Button
+														type="button"
+														size="icon"
+														variant="ghost"
+														onClick={() => removeEntry(e.id)}
+													>
+														<Trash2 className="h-4 w-4" />
+													</Button>
+												</td>
+											</tr>
+										))}
+									</tbody>
+								</table>
+							</div>
+						)}
 
 						<div className="flex flex-col sm:flex-row justify-between gap-3 pt-4 border-t">
 							{prevSection && (

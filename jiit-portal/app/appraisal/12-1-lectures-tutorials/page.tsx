@@ -19,12 +19,14 @@ import { simulateApiCall } from "@/lib/mockApi";
 import { toast } from "sonner";
 import { ArrowLeft, ArrowRight, Plus, Save, Trash2 } from "lucide-react";
 import AppraisalLayout from "@/components/AppraisalLayout";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 // Local row type including extra fields maintained in this page
 type Row = CourseEntry & { apiScore: number | null; hodRemarks?: string };
 
 export default function LecturesTutorialsPage() {
 	const router = useRouter();
+	const isMobile = useIsMobile();
 	const [isSubmitting, setIsSubmitting] = useState(false);
 	const [activeTab, setActiveTab] = useState<"odd" | "even">("odd");
 	const [apiScore, setApiScore] = useState<number | null>(null);
@@ -147,7 +149,78 @@ export default function LecturesTutorialsPage() {
 
 	const Table = ({ semester }: { semester: "odd" | "even" }) => {
 		const rows = semester === "odd" ? oddSemester : evenSemester;
-		return (
+		return isMobile ? (
+			<div className="space-y-3">
+				{rows.map((r) => (
+					<div key={r.id} className="rounded-lg border p-3 space-y-3">
+						<Input
+							value={r.courseCode}
+							onChange={(e) =>
+								updateRow(semester, r.id, "courseCode", e.target.value)
+							}
+							placeholder="Course Code (e.g., CS101)"
+						/>
+						<Input
+							value={r.courseTitle}
+							onChange={(e) =>
+								updateRow(semester, r.id, "courseTitle", e.target.value)
+							}
+							placeholder="Course Title"
+						/>
+						<Input
+							value={r.contactHoursPerWeek}
+							onChange={(e) =>
+								updateRow(semester, r.id, "contactHoursPerWeek", e.target.value)
+							}
+							placeholder="Contact Hours/Week"
+						/>
+						<div className="grid grid-cols-2 gap-2">
+							<div>
+								<Label className="text-xs">Scheduled</Label>
+								<Input
+									type="number"
+									value={r.scheduledHours}
+									onChange={(e) =>
+										updateRow(
+											semester,
+											r.id,
+											"scheduledHours",
+											Number(e.target.value) || 0
+										)
+									}
+									placeholder="60"
+								/>
+							</div>
+							<div>
+								<Label className="text-xs">Engaged</Label>
+								<Input
+									type="number"
+									value={r.engagedHours}
+									onChange={(e) =>
+										updateRow(
+											semester,
+											r.id,
+											"engagedHours",
+											Number(e.target.value) || 0
+										)
+									}
+									placeholder="60"
+								/>
+							</div>
+						</div>
+						<div className="flex justify-end">
+							<Button
+								variant="ghost"
+								size="icon"
+								onClick={() => removeRow(semester, r.id)}
+							>
+								<Trash2 className="h-4 w-4" />
+							</Button>
+						</div>
+					</div>
+				))}
+			</div>
+		) : (
 			<div className="rounded-lg border overflow-x-auto">
 				<table className="w-full text-sm">
 					<thead className="bg-muted/50 text-muted-foreground">

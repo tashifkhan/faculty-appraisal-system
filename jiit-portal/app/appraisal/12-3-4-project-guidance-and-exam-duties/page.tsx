@@ -30,6 +30,7 @@ import { getSectionData, updateSectionData } from "@/lib/localStorage";
 import { simulateApiCall } from "@/lib/mockApi";
 import { ArrowLeft, ArrowRight, Plus, Save, Trash2 } from "lucide-react";
 import { toast } from "sonner";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 const ACTIVITY_OPTIONS: { value: ExamDutyEntry["activity"]; label: string }[] =
 	[
@@ -44,6 +45,7 @@ const ACTIVITY_OPTIONS: { value: ExamDutyEntry["activity"]; label: string }[] =
 
 export default function ProjectGuidanceAndExamDutiesPage() {
 	const router = useRouter();
+	const isMobile = useIsMobile();
 
 	// Combined submission state
 	const [isSubmitting, setIsSubmitting] = useState(false);
@@ -318,140 +320,266 @@ export default function ProjectGuidanceAndExamDutiesPage() {
 								</p>
 							</div>{" "}
 							<div className="space-y-4">
-								<div className="rounded-lg border overflow-x-auto">
-									<table className="w-full text-sm">
-										<thead className="bg-muted/50 text-muted-foreground">
-											<tr>
-												<th className="px-4 py-3 text-left">Activity</th>
-												<th className="px-4 py-3 text-left">Class/Type</th>
-												<th className="px-4 py-3 text-left">T1</th>
-												<th className="px-4 py-3 text-left">T2</th>
-												<th className="px-4 py-3 text-left">T3</th>
-												<th className="px-4 py-3"></th>
-											</tr>
-										</thead>
-										<tbody>
-											{entries.map((e) => (
-												<tr key={e.id} className="border-t align-top">
-													<td className="px-4 py-3 w-[240px]">
-														<Select
-															value={e.activity}
-															onValueChange={(v: ExamDutyEntry["activity"]) =>
-																updateEntry(e.id, "activity", v)
-															}
-														>
-															<SelectTrigger>
-																<SelectValue />
-															</SelectTrigger>
-															<SelectContent>
-																{ACTIVITY_OPTIONS.map((opt) => (
-																	<SelectItem key={opt.value} value={opt.value}>
-																		{opt.label}
-																	</SelectItem>
-																))}
-															</SelectContent>
-														</Select>
-													</td>
-													<td className="px-4 py-3 w-[120px]">
-														{e.activity === "invigilation_duties" ? (
-															<Select
-																value={e.invigilationType || "allotted"}
-																onValueChange={(v: "allotted" | "performed") =>
-																	updateEntry(e.id, "invigilationType", v)
-																}
-															>
-																<SelectTrigger>
-																	<SelectValue />
-																</SelectTrigger>
-																<SelectContent>
-																	<SelectItem value="allotted">
-																		Allotted
-																	</SelectItem>
-																	<SelectItem value="performed">
-																		Performed
-																	</SelectItem>
-																</SelectContent>
-															</Select>
-														) : (
-															<Select
-																value={e.classLevel || "UG"}
-																onValueChange={(v: "UG" | "PG") =>
-																	updateEntry(e.id, "classLevel", v)
-																}
-															>
-																<SelectTrigger>
-																	<SelectValue />
-																</SelectTrigger>
-																<SelectContent>
-																	<SelectItem value="UG">UG</SelectItem>
-																	<SelectItem value="PG">PG</SelectItem>
-																</SelectContent>
-															</Select>
-														)}
-													</td>
-													<td className="px-4 py-3 w-[120px]">
-														<Input
-															type="number"
-															value={e.t1}
-															onChange={(ev) =>
-																updateEntry(
-																	e.id,
-																	"t1",
-																	Number(ev.target.value) || 0
-																)
-															}
-														/>
-													</td>
-													<td className="px-4 py-3 w-[120px]">
-														<Input
-															type="number"
-															value={e.t2}
-															onChange={(ev) =>
-																updateEntry(
-																	e.id,
-																	"t2",
-																	Number(ev.target.value) || 0
-																)
-															}
-														/>
-													</td>
-													<td className="px-4 py-3 w-[120px]">
-														<Input
-															type="number"
-															value={e.t3}
-															onChange={(ev) =>
-																updateEntry(
-																	e.id,
-																	"t3",
-																	Number(ev.target.value) || 0
-																)
-															}
-														/>
-													</td>
-													<td className="px-2 py-3 text-right">
-														<Button
-															type="button"
-															variant="ghost"
-															size="icon"
-															onClick={() => removeEntry(e.id)}
-														>
-															<Trash2 className="h-4 w-4" />
-														</Button>
-													</td>
-												</tr>
-											))}
-										</tbody>
-									</table>
-								</div>
+								{isMobile ? (
+									<div className="space-y-3">
+										{entries.map((e) => (
+											<div
+												key={e.id}
+												className="rounded-lg border p-3 space-y-3"
+											>
+												<Select
+													value={e.activity}
+													onValueChange={(v: ExamDutyEntry["activity"]) =>
+														updateEntry(e.id, "activity", v)
+													}
+												>
+													<SelectTrigger>
+														<SelectValue />
+													</SelectTrigger>
+													<SelectContent>
+														{ACTIVITY_OPTIONS.map((opt) => (
+															<SelectItem key={opt.value} value={opt.value}>
+																{opt.label}
+															</SelectItem>
+														))}
+													</SelectContent>
+												</Select>
+												{e.activity === "invigilation_duties" ? (
+													<Select
+														value={e.invigilationType || "allotted"}
+														onValueChange={(v: "allotted" | "performed") =>
+															updateEntry(e.id, "invigilationType", v)
+														}
+													>
+														<SelectTrigger>
+															<SelectValue />
+														</SelectTrigger>
+														<SelectContent>
+															<SelectItem value="allotted">Allotted</SelectItem>
+															<SelectItem value="performed">
+																Performed
+															</SelectItem>
+														</SelectContent>
+													</Select>
+												) : (
+													<Select
+														value={e.classLevel || "UG"}
+														onValueChange={(v: "UG" | "PG") =>
+															updateEntry(e.id, "classLevel", v)
+														}
+													>
+														<SelectTrigger>
+															<SelectValue />
+														</SelectTrigger>
+														<SelectContent>
+															<SelectItem value="UG">UG</SelectItem>
+															<SelectItem value="PG">PG</SelectItem>
+														</SelectContent>
+													</Select>
+												)}
 
-								<Button
-									type="button"
-									variant="outline"
-									onClick={addEntry}
-									className="w-full"
-								>
-									<Plus className="h-4 w-4 mr-2" /> Add New Entry
-								</Button>
+												<div className="grid grid-cols-3 gap-2">
+													<Input
+														type="number"
+														value={e.t1}
+														onChange={(ev) =>
+															updateEntry(
+																e.id,
+																"t1",
+																Number(ev.target.value) || 0
+															)
+														}
+														placeholder="T1"
+													/>
+													<Input
+														type="number"
+														value={e.t2}
+														onChange={(ev) =>
+															updateEntry(
+																e.id,
+																"t2",
+																Number(ev.target.value) || 0
+															)
+														}
+														placeholder="T2"
+													/>
+													<Input
+														type="number"
+														value={e.t3}
+														onChange={(ev) =>
+															updateEntry(
+																e.id,
+																"t3",
+																Number(ev.target.value) || 0
+															)
+														}
+														placeholder="T3"
+													/>
+												</div>
+												<div className="flex justify-end">
+													<Button
+														variant="ghost"
+														size="icon"
+														onClick={() => removeEntry(e.id)}
+													>
+														<Trash2 className="h-4 w-4" />
+													</Button>
+												</div>
+											</div>
+										))}
+
+										<Button
+											type="button"
+											variant="outline"
+											onClick={addEntry}
+											className="w-full"
+										>
+											<Plus className="h-4 w-4 mr-2" /> Add New Entry
+										</Button>
+									</div>
+								) : (
+									<div className="space-y-4">
+										<div className="rounded-lg border overflow-x-auto">
+											<table className="w-full text-sm">
+												<thead className="bg-muted/50 text-muted-foreground">
+													<tr>
+														<th className="px-4 py-3 text-left">Activity</th>
+														<th className="px-4 py-3 text-left">Class/Type</th>
+														<th className="px-4 py-3 text-left">T1</th>
+														<th className="px-4 py-3 text-left">T2</th>
+														<th className="px-4 py-3 text-left">T3</th>
+														<th className="px-4 py-3"></th>
+													</tr>
+												</thead>
+												<tbody>
+													{entries.map((e) => (
+														<tr key={e.id} className="border-t align-top">
+															<td className="px-4 py-3 w-[240px]">
+																<Select
+																	value={e.activity}
+																	onValueChange={(
+																		v: ExamDutyEntry["activity"]
+																	) => updateEntry(e.id, "activity", v)}
+																>
+																	<SelectTrigger>
+																		<SelectValue />
+																	</SelectTrigger>
+																	<SelectContent>
+																		{ACTIVITY_OPTIONS.map((opt) => (
+																			<SelectItem
+																				key={opt.value}
+																				value={opt.value}
+																			>
+																				{opt.label}
+																			</SelectItem>
+																		))}
+																	</SelectContent>
+																</Select>
+															</td>
+															<td className="px-4 py-3 w-[120px]">
+																{e.activity === "invigilation_duties" ? (
+																	<Select
+																		value={e.invigilationType || "allotted"}
+																		onValueChange={(
+																			v: "allotted" | "performed"
+																		) =>
+																			updateEntry(e.id, "invigilationType", v)
+																		}
+																	>
+																		<SelectTrigger>
+																			<SelectValue />
+																		</SelectTrigger>
+																		<SelectContent>
+																			<SelectItem value="allotted">
+																				Allotted
+																			</SelectItem>
+																			<SelectItem value="performed">
+																				Performed
+																			</SelectItem>
+																		</SelectContent>
+																	</Select>
+																) : (
+																	<Select
+																		value={e.classLevel || "UG"}
+																		onValueChange={(v: "UG" | "PG") =>
+																			updateEntry(e.id, "classLevel", v)
+																		}
+																	>
+																		<SelectTrigger>
+																			<SelectValue />
+																		</SelectTrigger>
+																		<SelectContent>
+																			<SelectItem value="UG">UG</SelectItem>
+																			<SelectItem value="PG">PG</SelectItem>
+																		</SelectContent>
+																	</Select>
+																)}
+															</td>
+															<td className="px-4 py-3 w-[120px]">
+																<Input
+																	type="number"
+																	value={e.t1}
+																	onChange={(ev) =>
+																		updateEntry(
+																			e.id,
+																			"t1",
+																			Number(ev.target.value) || 0
+																		)
+																	}
+																/>
+															</td>
+															<td className="px-4 py-3 w-[120px]">
+																<Input
+																	type="number"
+																	value={e.t2}
+																	onChange={(ev) =>
+																		updateEntry(
+																			e.id,
+																			"t2",
+																			Number(ev.target.value) || 0
+																		)
+																	}
+																/>
+															</td>
+															<td className="px-4 py-3 w-[120px]">
+																<Input
+																	type="number"
+																	value={e.t3}
+																	onChange={(ev) =>
+																		updateEntry(
+																			e.id,
+																			"t3",
+																			Number(ev.target.value) || 0
+																		)
+																	}
+																/>
+															</td>
+															<td className="px-2 py-3 text-right">
+																<Button
+																	type="button"
+																	variant="ghost"
+																	size="icon"
+																	onClick={() => removeEntry(e.id)}
+																>
+																	<Trash2 className="h-4 w-4" />
+																</Button>
+															</td>
+														</tr>
+													))}
+												</tbody>
+											</table>
+										</div>
+
+										<Button
+											type="button"
+											variant="outline"
+											onClick={addEntry}
+											className="w-full"
+										>
+											<Plus className="h-4 w-4 mr-2" /> Add New Entry
+										</Button>
+									</div>
+								)}
 							</div>
 						</CardContent>
 					</Card>

@@ -215,6 +215,10 @@ export default function ConferenceEvents() {
 											const startDate = start ? new Date(start) : undefined;
 											const endDate = end ? new Date(end) : undefined;
 
+											// local helper to ensure a date is valid before formatting/comparing
+											const isValidDate = (d: Date | undefined): d is Date =>
+												d instanceof Date && !isNaN(d.getTime());
+
 											return (
 												<>
 													<div className="space-y-2">
@@ -229,7 +233,7 @@ export default function ConferenceEvents() {
 																	)}
 																>
 																	<CalendarIcon className="mr-2 h-4 w-4" />
-																	{startDate ? (
+																	{isValidDate(startDate) ? (
 																		format(startDate, "PPP")
 																	) : (
 																		<span>Pick a date</span>
@@ -242,7 +246,11 @@ export default function ConferenceEvents() {
 															>
 																<Calendar
 																	mode="single"
-																	selected={startDate}
+																	selected={
+																		isValidDate(startDate)
+																			? startDate
+																			: undefined
+																	}
 																	onSelect={(date) => {
 																		const newStart = date
 																			? format(date, "yyyy-MM-dd")
@@ -271,7 +279,7 @@ export default function ConferenceEvents() {
 																	)}
 																>
 																	<CalendarIcon className="mr-2 h-4 w-4" />
-																	{endDate ? (
+																	{isValidDate(endDate) ? (
 																		format(endDate, "PPP")
 																	) : (
 																		<span>Pick a date</span>
@@ -284,7 +292,9 @@ export default function ConferenceEvents() {
 															>
 																<Calendar
 																	mode="single"
-																	selected={endDate}
+																	selected={
+																		isValidDate(endDate) ? endDate : undefined
+																	}
 																	onSelect={(date) => {
 																		const newEnd = date
 																			? format(date, "yyyy-MM-dd")
@@ -296,7 +306,9 @@ export default function ConferenceEvents() {
 																		);
 																	}}
 																	disabled={(date) =>
-																		startDate ? date < startDate : false
+																		isValidDate(startDate)
+																			? date < startDate
+																			: false
 																	}
 																	initialFocus
 																/>
